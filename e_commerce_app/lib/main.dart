@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/module/home/widget/customer_home.dart';
 import 'package:flutter/material.dart';
 
 import 'module/home/screens/home_screens.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreens(),
+      home: const CustomerHomeScreen(),
     );
   }
 }
