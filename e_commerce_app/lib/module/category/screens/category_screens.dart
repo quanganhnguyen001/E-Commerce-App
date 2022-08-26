@@ -1,5 +1,6 @@
-import 'package:e_commerce_app/model/category_list.dart';
 import 'package:flutter/material.dart';
+
+import 'package:e_commerce_app/model/category_list.dart';
 
 import '../../../common/widget/search_bar.dart';
 
@@ -9,6 +10,18 @@ class CategoryScreens extends StatefulWidget {
   @override
   State<CategoryScreens> createState() => _CategoryScreensState();
 }
+
+List<ItemData> items = [
+  ItemData(title: 'men'),
+  ItemData(title: 'women'),
+  ItemData(title: 'shoes'),
+  ItemData(title: 'bags'),
+  ItemData(title: 'electronics'),
+  ItemData(title: 'accessories'),
+  ItemData(title: 'home & garden'),
+  ItemData(title: 'kids'),
+  ItemData(title: 'beauty'),
+];
 
 class _CategoryScreensState extends State<CategoryScreens> {
   @override
@@ -49,17 +62,38 @@ class _CategoryScreensState extends State<CategoryScreens> {
     return Container(
       height: size.height * 0.8,
       width: size.width * 0.2,
-      color: Colors.grey.shade400,
       child: ListView.builder(
-          itemCount: maincateg.length,
+          itemCount: items.length,
           itemBuilder: (context, index) {
-            return Container(
-              height: 100,
-              child: Center(
-                child: Text(maincateg[index]),
+            return GestureDetector(
+              onTap: () {
+                for (var element in items) {
+                  element.isSelected = false;
+                }
+                setState(() {
+                  items[index].isSelected = true;
+                });
+              },
+              child: Container(
+                color: items[index].isSelected
+                    ? Colors.white
+                    : Colors.grey.shade300,
+                height: 100,
+                child: Center(
+                  child: Text(items[index].title),
+                ),
               ),
             );
           }),
     );
   }
+}
+
+class ItemData {
+  String title;
+  bool isSelected;
+  ItemData({
+    required this.title,
+    this.isSelected = false,
+  });
 }
