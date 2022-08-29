@@ -24,6 +24,20 @@ List<ItemData> items = [
 ];
 
 class _CategoryScreensState extends State<CategoryScreens> {
+  final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    for (var element in items) {
+      element.isSelected = false;
+    }
+    setState(() {
+      items[0].isSelected = true;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -38,7 +52,7 @@ class _CategoryScreensState extends State<CategoryScreens> {
           Positioned(
             bottom: 0,
             left: 0,
-            child: _sizeNavigator(size),
+            child: _sideNavigator(size),
           ),
           Positioned(
             bottom: 0,
@@ -55,10 +69,51 @@ class _CategoryScreensState extends State<CategoryScreens> {
       height: size.height * 0.8,
       width: size.width * 0.8,
       color: Colors.white,
+      child: PageView(
+        controller: _pageController,
+        onPageChanged: (value) {
+          for (var element in items) {
+            element.isSelected = false;
+          }
+          setState(() {
+            items[value].isSelected = true;
+          });
+        },
+        scrollDirection: Axis.vertical,
+        children: [
+          Center(
+            child: Text('men category'),
+          ),
+          Center(
+            child: Text('women category'),
+          ),
+          Center(
+            child: Text('shoes category'),
+          ),
+          Center(
+            child: Text('bags category'),
+          ),
+          Center(
+            child: Text('electronics category'),
+          ),
+          Center(
+            child: Text('accessories category'),
+          ),
+          Center(
+            child: Text('home and garden category'),
+          ),
+          Center(
+            child: Text('kids category'),
+          ),
+          Center(
+            child: Text('beauty category'),
+          ),
+        ],
+      ),
     );
   }
 
-  Container _sizeNavigator(Size size) {
+  Container _sideNavigator(Size size) {
     return Container(
       height: size.height * 0.8,
       width: size.width * 0.2,
@@ -67,12 +122,15 @@ class _CategoryScreensState extends State<CategoryScreens> {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                for (var element in items) {
-                  element.isSelected = false;
-                }
-                setState(() {
-                  items[index].isSelected = true;
-                });
+                _pageController.animateToPage(index,
+                    duration: Duration(milliseconds: 100),
+                    curve: Curves.bounceInOut);
+                // for (var element in items) {
+                //   element.isSelected = false;
+                // }
+                // setState(() {
+                //   items[index].isSelected = true;
+                // });
               },
               child: Container(
                 color: items[index].isSelected
