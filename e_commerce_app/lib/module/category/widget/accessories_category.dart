@@ -1,13 +1,12 @@
+import 'package:e_commerce_app/model/category_list.dart';
 import 'package:flutter/material.dart';
 
-import '../../../model/category_list.dart';
 import 'list_categ_product.dart';
 import 'slide_bar.dart';
-import 'sub_category_product.dart';
 import 'title_category_product.dart';
 
-class MenCategory extends StatelessWidget {
-  const MenCategory({Key? key}) : super(key: key);
+class AccessoriesCategory extends StatelessWidget {
+  const AccessoriesCategory({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class MenCategory extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TitleCategProduct(
-                    title: 'Men',
+                    title: 'Accessories',
                   ),
                   SizedBox(
                     height: size.height * 0.68,
@@ -35,12 +34,13 @@ class MenCategory extends StatelessWidget {
                       crossAxisSpacing: 15,
                       crossAxisCount: 3,
                       children: List.generate(
-                        men.length,
+                        accessories.length,
                         (index) => ListCategProduct(
-                          subCategName: 'men',
-                          subCategLabel: men[index],
-                          imageProd: 'assets/images/men/men$index.jpg',
-                          mainNameProd: men[index],
+                          subCategName: 'accessories',
+                          subCategLabel: accessories[index],
+                          imageProd:
+                              'assets/images/accessories/accessories$index.jpg',
+                          mainNameProd: accessories[index],
                         ),
                       ),
                     ),
@@ -54,7 +54,7 @@ class MenCategory extends StatelessWidget {
             right: 0,
             child: SlideBar(
               size: size,
-              mainCategName: 'men',
+              mainCategName: 'accessories',
             ),
           ),
         ],
