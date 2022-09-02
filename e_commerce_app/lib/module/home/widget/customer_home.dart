@@ -1,6 +1,7 @@
 import 'package:e_commerce_app/module/cart/screens/cart_screens.dart';
 import 'package:e_commerce_app/module/category/screens/category_screens.dart';
 import 'package:e_commerce_app/module/home/screens/home_screens.dart';
+import 'package:e_commerce_app/module/profile/screens/profile_screens.dart';
 import 'package:e_commerce_app/module/store/screen/store_screens.dart';
 import 'package:flutter/material.dart';
 
@@ -19,9 +20,7 @@ class CustomerHomeScreenState extends State<CustomerHomeScreen> {
     CategoryScreens(),
     StoreScreens(),
     CartScreens(),
-    Center(
-      child: Text('Profile'),
-    ),
+    ProfileScreens(),
   ];
 
   @override
