@@ -1,5 +1,6 @@
 import 'package:e_commerce_app/module/cart/screens/cart_screens.dart';
 import 'package:e_commerce_app/module/category/screens/category_screens.dart';
+import 'package:e_commerce_app/module/dashboard/screens/dashboard_screens.dart';
 import 'package:e_commerce_app/module/home/screens/home_screens.dart';
 import 'package:e_commerce_app/module/profile/screens/profile_screens.dart';
 import 'package:e_commerce_app/module/store/screen/store_screens.dart';
@@ -19,9 +20,7 @@ class AdminHomeState extends State<AdminHome> {
     HomeScreens(),
     CategoryScreens(),
     StoreScreens(),
-    Center(
-      child: Text('Dash'),
-    ),
+    DashBoardScreens(),
     Center(
       child: Text('Up'),
     ),
