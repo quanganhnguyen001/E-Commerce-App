@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/module/home/widget/admin_home.dart';
 import 'package:e_commerce_app/module/home/widget/customer_home.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const CustomerHomeScreen(),
+      home: const AdminHome(),
     );
   }
 }
