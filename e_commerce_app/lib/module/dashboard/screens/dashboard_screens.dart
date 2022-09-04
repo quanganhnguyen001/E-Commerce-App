@@ -31,7 +31,9 @@ class DashBoardScreens extends StatelessWidget {
         title: Text('DashBoard'),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/welcome_screens');
+              },
               icon: Icon(
                 Icons.logout,
                 color: Colors.black,

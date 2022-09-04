@@ -1,5 +1,6 @@
 import 'package:e_commerce_app/module/home/widget/admin_home.dart';
 import 'package:e_commerce_app/module/home/widget/customer_home.dart';
+import 'package:e_commerce_app/module/welcome/screens/welcome_screens.dart';
 import 'package:flutter/material.dart';
 
 import 'module/home/screens/home_screens.dart';
@@ -18,7 +19,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AdminHome(),
+      // home: const WelcomeScreens(),
+      initialRoute: '/welcome_screens',
+      routes: {
+        '/welcome_screens': (context) => WelcomeScreens(),
+        '/customer_screens': (context) => CustomerHomeScreen(),
+        '/admin_screens': (context) => AdminHome(),
+      },
     );
   }
 }

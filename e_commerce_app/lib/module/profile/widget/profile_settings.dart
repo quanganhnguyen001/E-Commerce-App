@@ -35,7 +35,9 @@ class ProfileSettings extends StatelessWidget {
                 title: 'Log Out',
                 subTitle: '',
                 icon: Icons.logout,
-                press: () {}),
+                press: () {
+                  Navigator.pushReplacementNamed(context, '/welcome_screens');
+                }),
             YellowDivider(),
           ],
         ),
