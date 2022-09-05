@@ -1,3 +1,7 @@
+import 'package:e_commerce_app/common/widget/appbar_back_button.dart';
+import 'package:e_commerce_app/module/cart/screens/cart_screens.dart';
+import 'package:e_commerce_app/module/profile/widget/customer_orders.dart';
+import 'package:e_commerce_app/module/profile/widget/customer_wishlist.dart';
 import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
 import 'package:flutter/material.dart';
 
@@ -106,18 +110,39 @@ class _ProfileScreensState extends State<ProfileScreens> {
                             nameButton: 'Cart',
                             color: Colors.black54,
                             textColor: Colors.yellow,
+                            press: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CartScreens(
+                                            back: AppBarBackButton(),
+                                          )));
+                            },
                           ),
                           ProfileButton(
                             size: size,
                             nameButton: 'Orders',
                             color: Colors.yellow,
                             textColor: Colors.black,
+                            press: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CustomerOrders()));
+                            },
                           ),
                           ProfileButton(
                             size: size,
                             nameButton: 'WishList',
                             color: Colors.black54,
                             textColor: Colors.yellow,
+                            press: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomerWishList()));
+                            },
                           ),
                         ],
                       ),

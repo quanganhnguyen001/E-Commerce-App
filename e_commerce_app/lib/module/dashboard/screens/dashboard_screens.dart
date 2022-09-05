@@ -1,3 +1,9 @@
+import 'package:e_commerce_app/module/dashboard/widget/balance.dart';
+import 'package:e_commerce_app/module/dashboard/widget/edit_profile.dart';
+import 'package:e_commerce_app/module/dashboard/widget/manage_product.dart';
+import 'package:e_commerce_app/module/dashboard/widget/my_store.dart';
+import 'package:e_commerce_app/module/dashboard/widget/orders.dart';
+import 'package:e_commerce_app/module/dashboard/widget/statics.dart';
 import 'package:flutter/material.dart';
 
 List<String> label = [
@@ -7,6 +13,15 @@ List<String> label = [
   'manage products',
   'balance',
   'statics',
+];
+
+List<Widget> pages = [
+  MyStore(),
+  Orders(),
+  EditProfile(),
+  ManageProducts(),
+  Balance(),
+  Statics(),
 ];
 
 List<IconData> icon = [
@@ -48,28 +63,34 @@ class DashBoardScreens extends StatelessWidget {
           crossAxisCount: 2,
           children: List.generate(
             6,
-            (index) => Card(
-              elevation: 20,
-              shadowColor: Colors.pinkAccent.shade200,
-              color: Colors.blueGrey.withOpacity(0.7),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Icon(
-                    icon[index],
-                    color: Colors.yellowAccent,
-                    size: 50,
-                  ),
-                  Text(
-                    label[index].toUpperCase(),
-                    style: TextStyle(
-                        letterSpacing: 2,
-                        fontSize: 24,
-                        color: Colors.yellowAccent,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Acme'),
-                  ),
-                ],
+            (index) => InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => pages[index]));
+              },
+              child: Card(
+                elevation: 20,
+                shadowColor: Colors.pinkAccent.shade200,
+                color: Colors.blueGrey.withOpacity(0.7),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(
+                      icon[index],
+                      color: Colors.yellowAccent,
+                      size: 50,
+                    ),
+                    Text(
+                      label[index].toUpperCase(),
+                      style: TextStyle(
+                          letterSpacing: 2,
+                          fontSize: 24,
+                          color: Colors.yellowAccent,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Acme'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

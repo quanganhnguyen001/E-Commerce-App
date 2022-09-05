@@ -7,12 +7,14 @@ class ProfileButton extends StatelessWidget {
     required this.nameButton,
     required this.color,
     required this.textColor,
+    required this.press,
   }) : super(key: key);
 
   final Size size;
   final Color color;
   final String nameButton;
   final Color textColor;
+  final VoidCallback press;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class ProfileButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextButton(
-        onPressed: () {},
+        onPressed: press,
         child: SizedBox(
           height: 40,
           width: size.width * 0.2,
