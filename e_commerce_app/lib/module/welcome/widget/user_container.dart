@@ -65,7 +65,12 @@ class _UserContainerState extends State<UserContainer>
                 width: 0.25),
           ),
           YellowButton(
-              size: widget.size, label: 'Signup', press: () {}, width: 0.25),
+              size: widget.size,
+              label: 'Signup',
+              press: () {
+                Navigator.pushReplacementNamed(context, '/customer_signup');
+              },
+              width: 0.25),
           AnimatedLogo(controller: _controller),
         ],
       ),

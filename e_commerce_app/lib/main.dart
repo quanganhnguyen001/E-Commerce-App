@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/module/auth/screens/customer_signup.dart';
 import 'package:e_commerce_app/module/home/widget/admin_home.dart';
 import 'package:e_commerce_app/module/home/widget/customer_home.dart';
 import 'package:e_commerce_app/module/welcome/screens/welcome_screens.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/welcome_screens': (context) => WelcomeScreens(),
         '/customer_screens': (context) => CustomerHomeScreen(),
         '/admin_screens': (context) => AdminHome(),
+        '/customer_signup': (context) => CustomerSignup(),
       },
     );
   }
