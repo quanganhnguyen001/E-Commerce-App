@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:e_commerce_app/module/auth/widget/message_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widget/auth_button.dart';
 import '../widget/auth_header.dart';
@@ -21,13 +23,42 @@ class _CustomerSignupState extends State<CustomerSignup> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
 
-  // final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _emailController = TextEditingController();
-  // final TextEditingController _passwordController = TextEditingController();
-
   late String name;
   late String email;
   late String password;
+
+  XFile? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
+  void _pickImageCamera() async {
+    try {
+      final pickedImage = await _picker.pickImage(
+          source: ImageSource.camera,
+          maxHeight: 300,
+          maxWidth: 300,
+          imageQuality: 95);
+      setState(() {
+        _imageFile = pickedImage;
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  void _pickImageGalerry() async {
+    try {
+      final pickedImage = await _picker.pickImage(
+          source: ImageSource.gallery,
+          maxHeight: 300,
+          maxWidth: 300,
+          imageQuality: 95);
+      setState(() {
+        _imageFile = pickedImage;
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +85,9 @@ class _CustomerSignupState extends State<CustomerSignup> {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 40),
                             child: CircleAvatar(
+                              backgroundImage: _imageFile == null
+                                  ? null
+                                  : FileImage(File(_imageFile!.path)),
                               radius: 60,
                               backgroundColor: Colors.purpleAccent,
                             ),
@@ -61,7 +95,9 @@ class _CustomerSignupState extends State<CustomerSignup> {
                           Column(
                             children: [
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _pickImageCamera();
+                                },
                                 icon: Icon(
                                   Icons.camera_alt,
                                   color: Colors.purple,
@@ -69,7 +105,9 @@ class _CustomerSignupState extends State<CustomerSignup> {
                                 ),
                               ),
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _pickImageGalerry();
+                                },
                                 icon: Icon(
                                   Icons.photo,
                                   color: Colors.purple,
@@ -160,14 +198,15 @@ class _CustomerSignupState extends State<CustomerSignup> {
                         label: 'Sign Up',
                         press: () {
                           if (_formKey.currentState!.validate()) {
-                            // setState(() {
-                            //   name = _nameController.text;
-                            //   email = _emailController.text;
-                            //   password = _passwordController.text;
-                            // });
-                            print(name);
-                            print(email);
-                            print(password);
+                            if (_imageFile != null) {
+                              _formKey.currentState!.reset();
+                              setState(() {
+                                _imageFile = null;
+                              });
+                            } else {
+                              MessageHandler.showSnackBar(
+                                  _scaffoldKey, 'Pls pick an image');
+                            }
                           } else {
                             MessageHandler.showSnackBar(
                                 _scaffoldKey, 'Pls fill all fields');
