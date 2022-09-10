@@ -1,13 +1,15 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/module/auth/widget/message_handler.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-import '../widget/auth_button.dart';
-import '../widget/auth_header.dart';
-import '../widget/have_account.dart';
+import '../../widget/auth_button.dart';
+import '../../widget/auth_header.dart';
+import '../../widget/have_account.dart';
 
 class CustomerSignup extends StatefulWidget {
   const CustomerSignup({Key? key}) : super(key: key);
@@ -26,9 +28,14 @@ class _CustomerSignupState extends State<CustomerSignup> {
   late String name;
   late String email;
   late String password;
+  late String profileImage;
+  late String _uid;
+  bool _isLoading = false;
 
   XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  CollectionReference customers =
+      FirebaseFirestore.instance.collection('customers');
 
   void _pickImageCamera() async {
     try {
@@ -57,6 +64,67 @@ class _CustomerSignupState extends State<CustomerSignup> {
       });
     } catch (error) {
       rethrow;
+    }
+  }
+
+  void _signUp() async {
+    setState(() {
+      _isLoading = true;
+    });
+    if (_formKey.currentState!.validate()) {
+      if (_imageFile != null) {
+        try {
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(email: email, password: password);
+
+          firebase_storage.Reference ref = firebase_storage
+              .FirebaseStorage.instance
+              .ref('customer-image/$email.jpg');
+
+          await ref.putFile(File(_imageFile!.path));
+
+          profileImage = await ref.getDownloadURL();
+          _uid = FirebaseAuth.instance.currentUser!.uid;
+          await customers.doc(_uid).set({
+            'name': name,
+            'email': email,
+            'profileImage': profileImage,
+            'phone': '',
+            'address': '',
+            'cid': _uid,
+          });
+          _formKey.currentState!.reset();
+          setState(() {
+            _imageFile = null;
+          });
+
+          Navigator.pushReplacementNamed(context, '/customer_login');
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'weak-password') {
+            setState(() {
+              _isLoading = false;
+            });
+            MessageHandler.showSnackBar(
+                _scaffoldKey, 'The password provided is too weak.');
+          } else if (e.code == 'email-already-in-use') {
+            setState(() {
+              _isLoading = false;
+            });
+            MessageHandler.showSnackBar(
+                _scaffoldKey, 'The account already exists for that email.');
+          }
+        }
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        MessageHandler.showSnackBar(_scaffoldKey, 'Pls pick an image');
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      MessageHandler.showSnackBar(_scaffoldKey, 'Pls fill all fields');
     }
   }
 
@@ -192,27 +260,21 @@ class _CustomerSignupState extends State<CustomerSignup> {
                       HaveAccount(
                         haveAccount: 'Already have an account ?',
                         actionLabel: 'Login',
-                        press: () {},
-                      ),
-                      AuthButton(
-                        label: 'Sign Up',
                         press: () {
-                          if (_formKey.currentState!.validate()) {
-                            if (_imageFile != null) {
-                              _formKey.currentState!.reset();
-                              setState(() {
-                                _imageFile = null;
-                              });
-                            } else {
-                              MessageHandler.showSnackBar(
-                                  _scaffoldKey, 'Pls pick an image');
-                            }
-                          } else {
-                            MessageHandler.showSnackBar(
-                                _scaffoldKey, 'Pls fill all fields');
-                          }
+                          Navigator.pushReplacementNamed(
+                              context, '/customer_login');
                         },
                       ),
+                      _isLoading
+                          ? CircularProgressIndicator(
+                              color: Colors.purple,
+                            )
+                          : AuthButton(
+                              label: 'Sign Up',
+                              press: () {
+                                _signUp();
+                              },
+                            ),
                     ],
                   ),
                 ),

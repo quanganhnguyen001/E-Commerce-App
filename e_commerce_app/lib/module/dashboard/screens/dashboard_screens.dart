@@ -4,7 +4,10 @@ import 'package:e_commerce_app/module/dashboard/widget/manage_product.dart';
 import 'package:e_commerce_app/module/dashboard/widget/my_store.dart';
 import 'package:e_commerce_app/module/dashboard/widget/orders.dart';
 import 'package:e_commerce_app/module/dashboard/widget/statics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../../common/widget/alert_dialog.dart';
 
 List<String> label = [
   'my store',
@@ -47,7 +50,19 @@ class DashBoardScreens extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/welcome_screens');
+                MyAlertDialog.showDialog(
+                  context: context,
+                  title: 'Log Out',
+                  content: 'Are you sure want to log out ?',
+                  pressNo: () {
+                    Navigator.pop(context);
+                  },
+                  pressYes: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, '/welcome_screens');
+                  },
+                );
               },
               icon: Icon(
                 Icons.logout,

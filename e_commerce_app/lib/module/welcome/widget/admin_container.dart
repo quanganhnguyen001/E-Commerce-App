@@ -60,13 +60,18 @@ class _AdminContainerState extends State<AdminContainer>
               size: widget.size,
               label: 'Login',
               press: () {
-                Navigator.pushReplacementNamed(context, '/admin_screens');
+                Navigator.pushReplacementNamed(context, '/admin_login');
               },
               width: 0.25),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: YellowButton(
-                size: widget.size, label: 'Signup', press: () {}, width: 0.25),
+                size: widget.size,
+                label: 'Signup',
+                press: () {
+                  Navigator.pushReplacementNamed(context, '/admin_signup');
+                },
+                width: 0.25),
           ),
         ],
       ),

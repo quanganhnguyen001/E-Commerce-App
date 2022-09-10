@@ -6,7 +6,13 @@ import 'yellow_divider.dart';
 class ProfileInfo extends StatelessWidget {
   const ProfileInfo({
     Key? key,
+    required this.emailName,
+    required this.phone,
+    required this.address,
   }) : super(key: key);
+  final String emailName;
+  final String phone;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +27,20 @@ class ProfileInfo extends StatelessWidget {
           children: [
             RepeatListile(
               title: 'Email',
-              subTitle: 'test@gmail.com',
+              subTitle: emailName,
               icon: Icons.email,
               press: () {},
             ),
             YellowDivider(),
             RepeatListile(
                 title: 'Phone',
-                subTitle: '123456789',
+                subTitle: phone,
                 icon: Icons.phone_android,
                 press: () {}),
             YellowDivider(),
             RepeatListile(
                 title: 'Address',
-                subTitle: 'Viet Nam',
+                subTitle: address,
                 icon: Icons.location_on,
                 press: () {}),
             YellowDivider(),

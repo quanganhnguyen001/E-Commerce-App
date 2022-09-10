@@ -60,7 +60,7 @@ class _UserContainerState extends State<UserContainer>
                 size: widget.size,
                 label: 'Login',
                 press: () {
-                  Navigator.pushReplacementNamed(context, '/customer_screens');
+                  Navigator.pushReplacementNamed(context, '/customer_login');
                 },
                 width: 0.25),
           ),

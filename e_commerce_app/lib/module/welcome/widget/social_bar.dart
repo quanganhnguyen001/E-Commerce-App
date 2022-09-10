@@ -1,12 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'social_login.dart';
 
-class SocialBar extends StatelessWidget {
+class SocialBar extends StatefulWidget {
   const SocialBar({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<SocialBar> createState() => _SocialBarState();
+}
+
+class _SocialBarState extends State<SocialBar> {
+  bool isLoading = false;
+  CollectionReference customers =
+      FirebaseFirestore.instance.collection('customers');
+  late String _uid;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -28,14 +39,36 @@ class SocialBar extends StatelessWidget {
               press: () {},
               child: Image.asset('assets/images/inapp/facebook.jpg'),
             ),
-            SocialLogin(
-                label: 'Guest',
-                press: () {},
-                child: Icon(
-                  Icons.person,
-                  size: 55,
-                  color: Colors.blueAccent,
-                )),
+            isLoading
+                ? CircularProgressIndicator()
+                : SocialLogin(
+                    label: 'Guest',
+                    press: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      await FirebaseAuth.instance
+                          .signInAnonymously()
+                          .whenComplete(() async {
+                        _uid = FirebaseAuth.instance.currentUser!.uid;
+                        await customers.doc(_uid).set({
+                          'name': '',
+                          'email': '',
+                          'profileImage': '',
+                          'phone': '',
+                          'address': '',
+                          'cid': _uid,
+                        });
+                      });
+
+                      Navigator.pushReplacementNamed(
+                          context, '/customer_screens');
+                    },
+                    child: Icon(
+                      Icons.person,
+                      size: 55,
+                      color: Colors.blueAccent,
+                    )),
           ],
         ),
       ),

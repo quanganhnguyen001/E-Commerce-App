@@ -1,3 +1,6 @@
+import 'package:e_commerce_app/common/widget/alert_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'repeat_listile.dart';
@@ -35,8 +38,21 @@ class ProfileSettings extends StatelessWidget {
                 title: 'Log Out',
                 subTitle: '',
                 icon: Icons.logout,
-                press: () {
-                  Navigator.pushReplacementNamed(context, '/welcome_screens');
+                press: () async {
+                  MyAlertDialog.showDialog(
+                    context: context,
+                    title: 'Log Out',
+                    content: 'Are you sure want to log out ?',
+                    pressNo: () {
+                      Navigator.pop(context);
+                    },
+                    pressYes: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                          context, '/welcome_screens');
+                    },
+                  );
                 }),
             YellowDivider(),
           ],
