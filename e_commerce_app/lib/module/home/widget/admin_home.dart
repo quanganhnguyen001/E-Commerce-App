@@ -4,6 +4,7 @@ import 'package:e_commerce_app/module/dashboard/screens/dashboard_screens.dart';
 import 'package:e_commerce_app/module/home/screens/home_screens.dart';
 import 'package:e_commerce_app/module/profile/screens/profile_screens.dart';
 import 'package:e_commerce_app/module/store/screen/store_screens.dart';
+import 'package:e_commerce_app/module/upload/screens/upload_screens.dart';
 import 'package:flutter/material.dart';
 
 class AdminHome extends StatefulWidget {
@@ -21,9 +22,7 @@ class AdminHomeState extends State<AdminHome> {
     CategoryScreens(),
     StoreScreens(),
     DashBoardScreens(),
-    Center(
-      child: Text('Up'),
-    ),
+    UploadScreens(),
   ];
 
   @override
@@ -74,7 +73,7 @@ class AdminHomeState extends State<AdminHome> {
             Icons.dashboard,
             size: 35,
           ),
-          label: 'DashBoart',
+          label: 'DashBoard',
         ),
         BottomNavigationBarItem(
           icon: Icon(
