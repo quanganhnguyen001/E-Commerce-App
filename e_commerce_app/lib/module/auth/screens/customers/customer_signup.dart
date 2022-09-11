@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_app/module/auth/widget/message_handler.dart';
+import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,6 +33,7 @@ class _CustomerSignupState extends State<CustomerSignup> {
   bool _isLoading = false;
 
   XFile? _imageFile;
+  dynamic _pickedImageError;
   final ImagePicker _picker = ImagePicker();
   CollectionReference customers =
       FirebaseFirestore.instance.collection('customers');
@@ -48,7 +49,9 @@ class _CustomerSignupState extends State<CustomerSignup> {
         _imageFile = pickedImage;
       });
     } catch (error) {
-      rethrow;
+      setState(() {
+        _pickedImageError = error;
+      });
     }
   }
 
