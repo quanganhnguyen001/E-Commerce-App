@@ -34,12 +34,12 @@ class BagsCategory extends StatelessWidget {
                       crossAxisSpacing: 15,
                       crossAxisCount: 3,
                       children: List.generate(
-                        bags.length,
+                        bags.length - 1,
                         (index) => ListCategProduct(
                           subCategName: 'bags',
-                          subCategLabel: bags[index],
+                          subCategLabel: bags[index + 1],
                           imageProd: 'assets/images/bags/bags$index.jpg',
-                          mainNameProd: bags[index],
+                          mainNameProd: bags[index + 1],
                         ),
                       ),
                     ),

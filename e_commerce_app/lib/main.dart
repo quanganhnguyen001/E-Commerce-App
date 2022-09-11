@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const WelcomeScreens(),
       initialRoute: '/welcome_screens',
       routes: {
         '/welcome_screens': (context) => WelcomeScreens(),

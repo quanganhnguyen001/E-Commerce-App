@@ -34,12 +34,12 @@ class BeautyCategory extends StatelessWidget {
                       crossAxisSpacing: 15,
                       crossAxisCount: 3,
                       children: List.generate(
-                        beauty.length,
+                        beauty.length - 1,
                         (index) => ListCategProduct(
                           subCategName: 'beauty',
-                          subCategLabel: beauty[index],
+                          subCategLabel: beauty[index + 1],
                           imageProd: 'assets/images/beauty/beauty$index.jpg',
-                          mainNameProd: shoes[index],
+                          mainNameProd: shoes[index + 1],
                         ),
                       ),
                     ),

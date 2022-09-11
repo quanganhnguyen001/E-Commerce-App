@@ -34,13 +34,13 @@ class AccessoriesCategory extends StatelessWidget {
                       crossAxisSpacing: 15,
                       crossAxisCount: 3,
                       children: List.generate(
-                        accessories.length,
+                        accessories.length - 1,
                         (index) => ListCategProduct(
                           subCategName: 'accessories',
-                          subCategLabel: accessories[index],
+                          subCategLabel: accessories[index + 1],
                           imageProd:
                               'assets/images/accessories/accessories$index.jpg',
-                          mainNameProd: accessories[index],
+                          mainNameProd: accessories[index + 1],
                         ),
                       ),
                     ),
