@@ -3,8 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:e_commerce_app/model/category_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
 
 class UploadScreens extends StatefulWidget {
   const UploadScreens({Key? key}) : super(key: key);
@@ -22,33 +26,11 @@ class _UploadScreensState extends State<UploadScreens> {
   late int quantity;
   late String productName;
   late String productDescription;
+  late String prodId;
   String _mainCategoryValue = 'select category';
   String _subCategoryValue = 'subcategory';
   List<String> _subCategoryList = [];
-
-  void uploadProduct() {
-    if (_mainCategoryValue != 'select category' &&
-        _subCategoryValue != 'subcategory') {
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState!.save();
-        if (_imagesList.isNotEmpty) {
-          setState(() {
-            _imagesList = [];
-            _mainCategoryValue = 'select category';
-            _subCategoryValue = 'subcategory';
-          });
-          _formKey.currentState!.reset();
-        } else {
-          MessageHandler.showSnackBar(
-              _scaffoldKey, 'Pls pick some images first');
-        }
-      } else {
-        MessageHandler.showSnackBar(_scaffoldKey, 'Pls fill all fileds');
-      }
-    } else {
-      MessageHandler.showSnackBar(_scaffoldKey, 'Pls select categories');
-    }
-  }
+  bool isLoading = false;
 
   void _selectedMainCateg(value) {
     if (value == 'select category') {
@@ -79,6 +61,7 @@ class _UploadScreensState extends State<UploadScreens> {
   }
 
   List<XFile> _imagesList = [];
+  List<String> _imagesUrlList = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _pickedImageError;
 
@@ -94,6 +77,78 @@ class _UploadScreensState extends State<UploadScreens> {
         _pickedImageError = error;
       });
     }
+  }
+
+  Future<void> uploadImages() async {
+    if (_mainCategoryValue != 'select category' &&
+        _subCategoryValue != 'subcategory') {
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+        if (_imagesList.isNotEmpty) {
+          setState(() {
+            isLoading = true;
+          });
+          try {
+            for (var images in _imagesList) {
+              firebase_storage.Reference ref = firebase_storage
+                  .FirebaseStorage.instance
+                  .ref('products/${path.basename(images.path)}');
+
+              await ref.putFile(File(images.path)).whenComplete(() async {
+                await ref.getDownloadURL().then((value) {
+                  _imagesUrlList.add(value);
+                });
+              });
+            }
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          MessageHandler.showSnackBar(
+              _scaffoldKey, 'Pls pick some images first');
+        }
+      } else {
+        MessageHandler.showSnackBar(_scaffoldKey, 'Pls fill all fileds');
+      }
+    } else {
+      MessageHandler.showSnackBar(_scaffoldKey, 'Pls select categories');
+    }
+  }
+
+  void uploadData() async {
+    if (_imagesUrlList.isNotEmpty) {
+      CollectionReference productRef =
+          FirebaseFirestore.instance.collection('products');
+      prodId = Uuid().v4(); // generate random id
+      await productRef.doc(prodId).set({
+        'maincateg': _mainCategoryValue,
+        'subcateory': _subCategoryValue,
+        'price': price,
+        'quantity': quantity,
+        'prodname': productName,
+        'proddescrip': productDescription,
+        'sid': FirebaseAuth.instance.currentUser!.uid,
+        'prodimages': _imagesUrlList,
+        'discount': 0,
+        'proid': prodId,
+      }).whenComplete(() {
+        setState(() {
+          isLoading = false;
+          _imagesList = [];
+          _mainCategoryValue = 'select category';
+          // _subCategoryValue = 'subcategory';
+          _subCategoryList = [];
+          _imagesUrlList = [];
+        });
+        _formKey.currentState!.reset();
+      });
+    } else {}
+  }
+
+  void uploadProduct() async {
+    await uploadImages().whenComplete(() {
+      return uploadData();
+    });
   }
 
   @override
@@ -315,14 +370,20 @@ class _UploadScreensState extends State<UploadScreens> {
               ),
             ),
             FloatingActionButton(
-              onPressed: () {
-                uploadProduct();
-              },
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      uploadProduct();
+                    },
               backgroundColor: Colors.orange,
-              child: Icon(
-                Icons.upload,
-                color: Colors.black,
-              ),
+              child: isLoading
+                  ? CircularProgressIndicator(
+                      color: Colors.black,
+                    )
+                  : Icon(
+                      Icons.upload,
+                      color: Colors.black,
+                    ),
             ),
           ],
         ),
