@@ -85,7 +85,7 @@ class _AdminSignupState extends State<AdminSignup> {
           adminImage = await ref.getDownloadURL();
           _uid = FirebaseAuth.instance.currentUser!.uid;
           await admin.doc(_uid).set({
-            'adminname': adminImage,
+            'adminname': adminName,
             'email': email,
             'adminimage': adminImage,
             'phone': '',
@@ -261,7 +261,7 @@ class _AdminSignupState extends State<AdminSignup> {
                         actionLabel: 'Login',
                         press: () {
                           Navigator.pushReplacementNamed(
-                              context, '/customer_login');
+                              context, '/admin_login');
                         },
                       ),
                       _isLoading

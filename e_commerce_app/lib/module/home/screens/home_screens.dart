@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/module/gallery/screens/men_gallery.dart';
 import 'package:e_commerce_app/module/home/widget/tab_details.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +25,7 @@ class _HomeScreensState extends State<HomeScreens> {
         ),
         body: TabBarView(
           children: [
-            Center(
-              child: Text('men'),
-            ),
+            MenGallery(),
             Center(
               child: Text('women'),
             ),

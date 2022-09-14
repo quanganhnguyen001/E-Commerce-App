@@ -152,7 +152,7 @@ class _AdminLoginState extends State<AdminLogin> {
                         actionLabel: 'Sign Up',
                         press: () {
                           Navigator.pushReplacementNamed(
-                              context, '/customer_signup');
+                              context, '/admin_signup');
                         },
                       ),
                       _isLoading
