@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/module/gallery/screens/men_gallery.dart';
+import 'package:e_commerce_app/module/gallery/screens/women_gallery.dart';
 import 'package:e_commerce_app/module/home/widget/tab_details.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,7 @@ class _HomeScreensState extends State<HomeScreens> {
     return DefaultTabController(
       length: 9,
       child: Scaffold(
+        backgroundColor: Colors.blueGrey.shade100.withOpacity(0.5),
         appBar: AppBar(
           bottom: _buildTabbar(),
           backgroundColor: Colors.white,
@@ -26,9 +28,7 @@ class _HomeScreensState extends State<HomeScreens> {
         body: TabBarView(
           children: [
             MenGallery(),
-            Center(
-              child: Text('women'),
-            ),
+            WomenGallery(),
             Center(
               child: Text('shoes'),
             ),
