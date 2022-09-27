@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
+import 'package:e_commerce_app/module/details/screens/full_screens.dart';
 import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
@@ -33,47 +34,58 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Stack(
-                  children: [
-                    Container(
-                      height: size.height * 0.45,
-                      child: Swiper(
-                          pagination: SwiperPagination(
-                              builder: SwiperPagination.fraction),
-                          itemBuilder: (context, index) {
-                            return Image(image: NetworkImage(imageList[index]));
-                          },
-                          itemCount: imageList.length),
-                    ),
-                    Positioned(
-                        left: 15,
-                        top: 20,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.yellow,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FullScreens(
+                                  imageslist: imageList,
+                                )));
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: size.height * 0.45,
+                        child: Swiper(
+                            pagination: SwiperPagination(
+                                builder: SwiperPagination.fraction),
+                            itemBuilder: (context, index) {
+                              return Image(
+                                  image: NetworkImage(imageList[index]));
                             },
-                          ),
-                        )),
-                    Positioned(
-                        right: 15,
-                        top: 20,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.yellow,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.share,
-                              color: Colors.black,
+                            itemCount: imageList.length),
+                      ),
+                      Positioned(
+                          left: 15,
+                          top: 20,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.yellow,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            onPressed: () {},
-                          ),
-                        )),
-                  ],
+                          )),
+                      Positioned(
+                          right: 15,
+                          top: 20,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.yellow,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.share,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {},
+                            ),
+                          )),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 15,

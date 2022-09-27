@@ -19,7 +19,7 @@ class AdminSignup extends StatefulWidget {
 }
 
 class _AdminSignupState extends State<AdminSignup> {
-  bool isVisible = false;
+  bool isVisible = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =

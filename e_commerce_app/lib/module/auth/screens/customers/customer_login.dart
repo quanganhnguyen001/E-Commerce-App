@@ -19,7 +19,7 @@ class CustomerLogin extends StatefulWidget {
 }
 
 class _CustomerLoginState extends State<CustomerLogin> {
-  bool isVisible = false;
+  bool isVisible = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
