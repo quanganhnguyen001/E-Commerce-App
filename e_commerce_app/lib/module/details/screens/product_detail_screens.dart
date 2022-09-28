@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
 import 'package:e_commerce_app/module/details/screens/full_screens.dart';
 import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
+import 'package:e_commerce_app/module/store/widget/store_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
@@ -208,7 +209,15 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
               children: [
                 Row(
                   children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.store)),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StoreDetails(
+                                      adminId: widget.prodList['sid'])));
+                        },
+                        icon: Icon(Icons.store)),
                     const SizedBox(
                       width: 20,
                     ),

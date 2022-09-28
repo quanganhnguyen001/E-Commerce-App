@@ -4,6 +4,7 @@ import 'package:e_commerce_app/module/dashboard/widget/manage_product.dart';
 import 'package:e_commerce_app/module/dashboard/widget/my_store.dart';
 import 'package:e_commerce_app/module/dashboard/widget/orders.dart';
 import 'package:e_commerce_app/module/dashboard/widget/statics.dart';
+import 'package:e_commerce_app/module/store/widget/store_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ List<String> label = [
 ];
 
 List<Widget> pages = [
-  MyStore(),
+  StoreDetails(adminId: FirebaseAuth.instance.currentUser!.uid),
   Orders(),
   EditProfile(),
   ManageProducts(),
