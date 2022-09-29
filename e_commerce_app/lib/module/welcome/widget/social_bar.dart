@@ -15,8 +15,8 @@ class SocialBar extends StatefulWidget {
 
 class _SocialBarState extends State<SocialBar> {
   bool isLoading = false;
-  CollectionReference customers =
-      FirebaseFirestore.instance.collection('customers');
+  CollectionReference anonymous =
+      FirebaseFirestore.instance.collection('anonymous');
   late String _uid;
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _SocialBarState extends State<SocialBar> {
                           .signInAnonymously()
                           .whenComplete(() async {
                         _uid = FirebaseAuth.instance.currentUser!.uid;
-                        await customers.doc(_uid).set({
+                        await anonymous.doc(_uid).set({
                           'name': '',
                           'email': '',
                           'profileImage': '',

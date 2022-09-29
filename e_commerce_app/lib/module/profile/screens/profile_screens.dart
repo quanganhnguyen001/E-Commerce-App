@@ -4,6 +4,7 @@ import 'package:e_commerce_app/module/cart/screens/cart_screens.dart';
 import 'package:e_commerce_app/module/profile/widget/customer_orders.dart';
 import 'package:e_commerce_app/module/profile/widget/customer_wishlist.dart';
 import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../widget/profile_button.dart';
@@ -23,13 +24,17 @@ class ProfileScreens extends StatefulWidget {
 class _ProfileScreensState extends State<ProfileScreens> {
   CollectionReference users =
       FirebaseFirestore.instance.collection('customers');
+  CollectionReference anonymous =
+      FirebaseFirestore.instance.collection('anonymous');
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return FutureBuilder<DocumentSnapshot>(
-      future: users
-          .doc(widget.documentId)
-          .get(), // use widget. to pass data statefull class to state object class
+      future: FirebaseAuth.instance.currentUser!.isAnonymous
+          ? anonymous.doc(widget.documentId).get()
+          : users
+              .doc(widget.documentId)
+              .get(), // use widget. to pass data statefull class to state object class
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
@@ -194,7 +199,7 @@ class _ProfileScreensState extends State<ProfileScreens> {
                                 ProfileHeaders(name: 'Account Info'),
                                 ProfileInfo(
                                   emailName: data['email'] == ''
-                                      ? 'guest@gamil.com'
+                                      ? 'guest@gmail.com'
                                       : data['email'],
                                   phone: data['phone'] == ''
                                       ? '123456789'

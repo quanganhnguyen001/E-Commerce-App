@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/common/widget/appbar_back_button.dart';
+import 'package:e_commerce_app/common/widget/orange_back_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 
@@ -50,6 +53,7 @@ class _StoreDetailsState extends State<StoreDetails> {
           return Scaffold(
             backgroundColor: Colors.blueGrey.shade100,
             appBar: AppBar(
+              leading: OrangeBackButton(),
               title: Row(
                 children: [
                   Container(
@@ -183,6 +187,15 @@ class _StoreDetailsState extends State<StoreDetails> {
                   );
                 },
               ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.green,
+              child: Icon(
+                FontAwesomeIcons.whatsapp,
+                color: Colors.white,
+                size: 40,
+              ),
+              onPressed: () {},
             ),
           );
         }
