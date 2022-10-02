@@ -5,15 +5,19 @@ import 'package:e_commerce_app/module/auth/screens/customers/customer_signup.dar
 import 'package:e_commerce_app/module/home/widget/admin_home.dart';
 import 'package:e_commerce_app/module/home/widget/customer_home.dart';
 import 'package:e_commerce_app/module/welcome/screens/welcome_screens.dart';
+import 'package:e_commerce_app/providers/cart_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'module/home/screens/home_screens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => Cart()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
