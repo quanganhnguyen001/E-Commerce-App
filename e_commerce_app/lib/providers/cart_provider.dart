@@ -36,6 +36,15 @@ class Cart extends ChangeNotifier {
     return _list.length;
   }
 
+  double get totalPrice {
+    var total = 0.0;
+
+    for (var item in _list) {
+      total += item.price * item.quantitycart;
+    }
+    return total;
+  }
+
   void addItems(
     String name,
     double price,
@@ -64,6 +73,16 @@ class Cart extends ChangeNotifier {
 
   void reduce(Product product) {
     product.decrease();
+    notifyListeners();
+  }
+
+  void removeItem(Product product) {
+    _list.remove(product);
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _list.clear();
     notifyListeners();
   }
 }
