@@ -7,6 +7,7 @@ import 'package:e_commerce_app/module/details/screens/full_screens.dart';
 import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
 import 'package:e_commerce_app/module/store/widget/store_details.dart';
 import 'package:e_commerce_app/providers/cart_provider.dart';
+import 'package:e_commerce_app/providers/wish_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:provider/provider.dart';
@@ -136,7 +137,28 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                               ],
                             ),
                             IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context
+                                              .read<Wish>()
+                                              .getWishItems
+                                              .firstWhereOrNull((product) =>
+                                                  product.documentId ==
+                                                  widget.prodList['proid']) !=
+                                          null
+                                      ? MessageHandler.showSnackBar(
+                                          _scaffoldKey,
+                                          'this item already in your wishlist')
+                                      : context.read<Wish>().addWishItems(
+                                          widget.prodList['prodname'],
+                                          widget.prodList['price'],
+                                          1,
+                                          widget.prodList['quantity'],
+                                          widget.prodList['prodimages'],
+                                          widget.prodList['proid'],
+                                          widget.prodList['sid']);
+                                  MessageHandler.showSnackBar(
+                                      _scaffoldKey, 'Go check your wishlist');
+                                },
                                 icon: Icon(
                                   Icons.favorite_border_outlined,
                                   color: Colors.red,
