@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/appbar_back_button.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
@@ -273,7 +274,22 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                                           back: AppBarBackButton(),
                                         )));
                           },
-                          icon: Icon(Icons.shopping_cart)),
+                          icon: Badge(
+                              showBadge: context.read<Cart>().getItems.isEmpty
+                                  ? false
+                                  : true,
+                              padding: EdgeInsets.all(2),
+                              badgeColor: Colors.yellow,
+                              badgeContent: Text(
+                                context
+                                    .watch<Cart>()
+                                    .getItems
+                                    .length
+                                    .toString(),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              child: Icon(Icons.shopping_cart))),
                     ],
                   ),
                   YellowButton(
@@ -295,8 +311,6 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                                 widget.prodList['prodimages'],
                                 widget.prodList['proid'],
                                 widget.prodList['sid']);
-                        MessageHandler.showSnackBar(
-                            _scaffoldKey, 'Go check your cart');
                       },
                       width: 0.5),
                 ],

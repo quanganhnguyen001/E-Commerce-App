@@ -39,6 +39,28 @@ class _CustomerWishListState extends State<CustomerWishList> {
           style: TextStyle(color: Colors.black, fontSize: 25),
         ),
         leading: AppBarBackButton(),
+        actions: [
+          context.watch<Wish>().getWishItems.isEmpty
+              ? SizedBox()
+              : IconButton(
+                  onPressed: () {
+                    MyAlertDialog.showDialog(
+                        context: context,
+                        title: 'Clear WishList',
+                        content: 'Are you sure to clear WishList',
+                        pressNo: () {
+                          Navigator.pop(context);
+                        },
+                        pressYes: () {
+                          context.read<Wish>().clearWishList();
+                          Navigator.pop(context);
+                        });
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.black,
+                  ))
+        ],
       ),
       body: context.watch<Wish>().getWishItems.isNotEmpty
           ? WishItems()
