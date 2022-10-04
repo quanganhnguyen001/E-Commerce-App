@@ -5,7 +5,7 @@ import 'package:e_commerce_app/module/home/widget/customer_home.dart';
 
 import 'package:e_commerce_app/module/profile/widget/wish_items.dart';
 import 'package:e_commerce_app/providers/cart_provider.dart';
-import 'package:e_commerce_app/providers/wish_list_provider.dart';
+import 'package:e_commerce_app/providers/wish_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -39,29 +39,6 @@ class _CustomerWishListState extends State<CustomerWishList> {
           style: TextStyle(color: Colors.black, fontSize: 25),
         ),
         leading: AppBarBackButton(),
-        actions: [
-          context.watch<Cart>().getItems.isEmpty
-              ? SizedBox()
-              : IconButton(
-                  onPressed: () {
-                    MyAlertDialog.showDialog(
-                        context: context,
-                        title: 'Clear Cart',
-                        content: 'Are you sure to clear cart ?',
-                        pressNo: () {
-                          Navigator.pop(context);
-                        },
-                        pressYes: () {
-                          context.read<Cart>().clearCart();
-                          Navigator.pop(context);
-                        });
-                  },
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.black,
-                  ),
-                ),
-        ],
       ),
       body: context.watch<Wish>().getWishItems.isNotEmpty
           ? WishItems()
