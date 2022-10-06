@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:e_commerce_app/module/cart/screens/cart_screens.dart';
 import 'package:e_commerce_app/module/category/screens/category_screens.dart';
 import 'package:e_commerce_app/module/home/screens/home_screens.dart';
@@ -5,6 +6,9 @@ import 'package:e_commerce_app/module/profile/screens/profile_screens.dart';
 import 'package:e_commerce_app/module/store/screen/store_screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../providers/cart_provider.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({Key? key}) : super(key: key);
@@ -70,10 +74,18 @@ class CustomerHomeScreenState extends State<CustomerHomeScreen> {
           label: 'Stores',
         ),
         BottomNavigationBarItem(
-          icon: Icon(
-            Icons.shopping_cart,
-            size: 35,
-          ),
+          icon: Badge(
+              showBadge: context.read<Cart>().getItems.isEmpty ? false : true,
+              padding: EdgeInsets.all(6),
+              badgeColor: Colors.yellow,
+              badgeContent: Text(
+                context.watch<Cart>().getItems.length.toString(),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              child: Icon(
+                Icons.shopping_cart,
+                size: 35,
+              )),
           label: 'Cart',
         ),
         BottomNavigationBarItem(
