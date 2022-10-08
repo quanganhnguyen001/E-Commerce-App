@@ -177,12 +177,18 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                                       )),
                           ],
                         ),
-                        Text(
-                          (widget.prodList['quantity'].toString()) +
-                              (' prod available in cart'),
-                          style:
-                              TextStyle(color: Colors.blueGrey, fontSize: 16),
-                        ),
+                        widget.prodList['quantity'] == 0
+                            ? Text(
+                                'This item is sold out',
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              )
+                            : Text(
+                                (widget.prodList['quantity'].toString()) +
+                                    (' prod available in cart'),
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
                         ProfileHeaders(name: 'Item Description'),
                         Text(
                           widget.prodList['proddescrip'],
@@ -296,21 +302,28 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                       size: size,
                       label: 'Add to cart',
                       press: () {
-                        context.read<Cart>().getItems.firstWhereOrNull(
-                                    (product) =>
-                                        product.documentId ==
-                                        widget.prodList['proid']) !=
-                                null
-                            ? MessageHandler.showSnackBar(
-                                _scaffoldKey, 'this item already in your cart')
-                            : context.read<Cart>().addItems(
-                                widget.prodList['prodname'],
-                                widget.prodList['price'],
-                                1,
-                                widget.prodList['quantity'],
-                                widget.prodList['prodimages'],
-                                widget.prodList['proid'],
-                                widget.prodList['sid']);
+                        if (widget.prodList['quantity'] == 0) {
+                          MessageHandler.showSnackBar(
+                              _scaffoldKey, 'this item is sold out');
+                        } else if (context
+                                .read<Cart>()
+                                .getItems
+                                .firstWhereOrNull((product) =>
+                                    product.documentId ==
+                                    widget.prodList['proid']) !=
+                            null) {
+                          MessageHandler.showSnackBar(
+                              _scaffoldKey, 'this item already in your cart');
+                        } else {
+                          context.read<Cart>().addItems(
+                              widget.prodList['prodname'],
+                              widget.prodList['price'],
+                              1,
+                              widget.prodList['quantity'],
+                              widget.prodList['prodimages'],
+                              widget.prodList['proid'],
+                              widget.prodList['sid']);
+                        }
                       },
                       width: 0.5),
                 ],

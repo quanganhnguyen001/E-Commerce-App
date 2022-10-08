@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/appbar_back_button.dart';
 import 'package:e_commerce_app/common/widget/appbar_title.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
+import 'package:e_commerce_app/module/payment/screens/payment_screens.dart';
 import 'package:e_commerce_app/providers/cart_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -187,9 +188,15 @@ class _OrderScreensState extends State<OrderScreens> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: YellowButton(
-                        label: 'Confirm',
+                        label:
+                            'Confirm  ${context.watch<Cart>().totalPrice.toStringAsFixed(2)} \$',
                         width: 1,
-                        press: () {},
+                        press: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PaymentScreens()));
+                        },
                         size: size,
                       ),
                     ),
