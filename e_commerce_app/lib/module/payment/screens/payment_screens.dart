@@ -265,6 +265,7 @@ class _OrderScreensState extends State<PaymentScreens> {
                                                       'email': data['email'],
                                                       'address':
                                                           data['address'],
+                                                      'ordername': item.name,
                                                       'phone': data['phone'],
                                                       'profileimage':
                                                           data['profileImage'],

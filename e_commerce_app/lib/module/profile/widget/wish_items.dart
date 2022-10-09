@@ -70,15 +70,16 @@ class WishItems extends StatelessWidget {
                                           height: 15,
                                         ),
                                         context
-                                                    .watch<Cart>()
-                                                    .getItems
-                                                    .firstWhereOrNull(
-                                                        (element) =>
-                                                            element
-                                                                .documentId ==
-                                                            product
-                                                                .documentId) !=
-                                                null
+                                                        .watch<Cart>()
+                                                        .getItems
+                                                        .firstWhereOrNull(
+                                                            (element) =>
+                                                                element
+                                                                    .documentId ==
+                                                                product
+                                                                    .documentId) !=
+                                                    null ||
+                                                product.quantityprod == 0
                                             ? SizedBox()
                                             : IconButton(
                                                 onPressed: () {
