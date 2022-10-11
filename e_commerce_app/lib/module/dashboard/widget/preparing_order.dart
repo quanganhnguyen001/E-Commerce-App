@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class PreparingOrder extends StatelessWidget {
@@ -186,21 +187,50 @@ class PreparingOrder extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Change Delivery Status To: ',
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                  order['deliverystatus'] == 'preparing'
-                                      ? TextButton(
-                                          onPressed: () {},
-                                          child: Text('shipping ?'))
-                                      : TextButton(
-                                          onPressed: () {},
-                                          child: Text('delivered ?')),
-                                ],
-                              ),
+                              order['deliverystatus'] == 'delivered'
+                                  ? Text('This order has already delivered')
+                                  : Row(
+                                      children: [
+                                        Text(
+                                          'Change Delivery Status To: ',
+                                          style: TextStyle(fontSize: 15),
+                                        ),
+                                        order['deliverystatus'] == 'preparing'
+                                            ? TextButton(
+                                                onPressed: () {
+                                                  DatePicker.showDatePicker(
+                                                      context,
+                                                      minTime: DateTime.now(),
+                                                      maxTime: DateTime.now()
+                                                          .add(Duration(
+                                                              days: 365)),
+                                                      onConfirm: (date) async {
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection('orders')
+                                                        .doc(order['orderid'])
+                                                        .update({
+                                                      'deliverystatus':
+                                                          'shipping',
+                                                      'deliverydate': date,
+                                                    });
+                                                  });
+                                                },
+                                                child: Text('shipping ?'))
+                                            : TextButton(
+                                                onPressed: () async {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('orders')
+                                                      .doc(order['orderid'])
+                                                      .update({
+                                                    'deliverystatus':
+                                                        'delivered'
+                                                  });
+                                                },
+                                                child: Text('delivered ?')),
+                                      ],
+                                    ),
                             ],
                           ),
                         ),

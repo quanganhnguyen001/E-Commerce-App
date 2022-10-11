@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../common/widget/appbar_back_button.dart';
 import '../../../common/widget/appbar_title.dart';
@@ -187,7 +188,9 @@ class CustomerOrders extends StatelessWidget {
                                 order['deliverystatus'] == 'shipping'
                                     ? Text(
                                         ('Estimated Delivery Date: ') +
-                                            (order['deliverydate']),
+                                            (DateFormat('yyyy-MM-dd').format(
+                                                order['deliverydate']
+                                                    .toDate())),
                                         style: TextStyle(fontSize: 15),
                                       )
                                     : Text(''),

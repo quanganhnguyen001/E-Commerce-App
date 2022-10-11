@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class DeliveredOrder extends StatelessWidget {
@@ -196,10 +197,37 @@ class DeliveredOrder extends StatelessWidget {
                                         ),
                                         order['deliverystatus'] == 'preparing'
                                             ? TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  DatePicker.showDatePicker(
+                                                      context,
+                                                      minTime: DateTime.now(),
+                                                      maxTime: DateTime.now()
+                                                          .add(Duration(
+                                                              days: 365)),
+                                                      onConfirm: (date) async {
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection('orders')
+                                                        .doc(order['orderid'])
+                                                        .update({
+                                                      'deliverystatus':
+                                                          'shipping',
+                                                      'deliverydate': date,
+                                                    });
+                                                  });
+                                                },
                                                 child: Text('shipping ?'))
                                             : TextButton(
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('orders')
+                                                      .doc(order['orderid'])
+                                                      .update({
+                                                    'deliverystatus':
+                                                        'delivered'
+                                                  });
+                                                },
                                                 child: Text('delivered ?')),
                                       ],
                                     ),
