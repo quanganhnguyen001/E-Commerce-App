@@ -1,14 +1,20 @@
 import 'package:e_commerce_app/module/dashboard/screens/dashboard_screens.dart';
 import 'package:flutter/material.dart';
 
+import 'animated_counter.dart';
+
 class StaticsModel extends StatelessWidget {
   const StaticsModel({
     Key? key,
     required this.label,
     required this.value,
+    required this.decimal,
+    required this.sign,
   }) : super(key: key);
   final String label;
   final dynamic value;
+  final int decimal;
+  final String sign;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +37,10 @@ class StaticsModel extends StatelessWidget {
         Container(
           height: 90,
           width: MediaQuery.of(context).size.width * 0.7,
-          child: Center(
-            child: Text(
-              value.toUpperCase(),
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Colors.red),
-            ),
+          child: AnimatedCounter(
+            dollarSign: sign,
+            count: value,
+            decimal: decimal,
           ),
           decoration: BoxDecoration(
               color: Colors.blueGrey.shade100,
