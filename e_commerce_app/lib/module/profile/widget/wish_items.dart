@@ -51,7 +51,7 @@ class WishItems extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      product.price.toStringAsFixed(2),
+                                      '\$' + product.price.toStringAsFixed(2),
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.red,

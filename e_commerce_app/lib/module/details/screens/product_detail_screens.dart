@@ -121,19 +121,48 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  'USD ',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Text(
-                                  widget.prodList['price'].toStringAsFixed(2),
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '\$',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      widget.prodList['price']
+                                          .toStringAsFixed(2),
+                                      style: widget.prodList['discount'] != 0
+                                          ? TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 14,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontWeight: FontWeight.w600)
+                                          : TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    widget.prodList['discount'] != 0
+                                        ? Text(
+                                            ((1 -
+                                                        (widget.prodList[
+                                                                'discount'] /
+                                                            100)) *
+                                                    widget.prodList['price'])
+                                                .toStringAsFixed(2),
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        : Text(''),
+                                  ],
                                 ),
                               ],
                             ),
@@ -151,7 +180,13 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                                           .removeThis(widget.prodList['proid'])
                                       : context.read<Wish>().addWishItems(
                                           widget.prodList['prodname'],
-                                          widget.prodList['price'],
+                                          widget.prodList['discount'] != 0
+                                              ? ((1 -
+                                                      (widget.prodList[
+                                                              'discount'] /
+                                                          100)) *
+                                                  widget.prodList['price'])
+                                              : widget.prodList['price'],
                                           1,
                                           widget.prodList['quantity'],
                                           widget.prodList['prodimages'],
@@ -317,7 +352,10 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                         } else {
                           context.read<Cart>().addItems(
                               widget.prodList['prodname'],
-                              widget.prodList['price'],
+                              widget.prodList['discount'] != 0
+                                  ? ((1 - (widget.prodList['discount'] / 100)) *
+                                      widget.prodList['price'])
+                                  : widget.prodList['price'],
                               1,
                               widget.prodList['quantity'],
                               widget.prodList['prodimages'],
