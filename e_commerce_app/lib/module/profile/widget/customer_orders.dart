@@ -1,14 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/common/widget/yellow_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 import '../../../common/widget/appbar_back_button.dart';
 import '../../../common/widget/appbar_title.dart';
 
-class CustomerOrders extends StatelessWidget {
+class CustomerOrders extends StatefulWidget {
   const CustomerOrders({Key? key}) : super(key: key);
 
+  @override
+  State<CustomerOrders> createState() => _CustomerOrdersState();
+}
+
+class _CustomerOrdersState extends State<CustomerOrders> {
+  late double rate;
+  late String comment;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +206,160 @@ class CustomerOrders extends StatelessWidget {
                                 order['deliverystatus'] == 'delivered' &&
                                         order['orderreview'] == false
                                     ? TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) => Material(
+                                                    color: Colors.white,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 150),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          RatingBar.builder(
+                                                              initialRating: 1,
+                                                              minRating: 1,
+                                                              allowHalfRating:
+                                                                  true,
+                                                              itemBuilder:
+                                                                  (context, _) {
+                                                                return Icon(
+                                                                  Icons.star,
+                                                                  color: Colors
+                                                                      .amber,
+                                                                );
+                                                              },
+                                                              onRatingUpdate:
+                                                                  (value) {
+                                                                rate = value;
+                                                              }),
+                                                          TextField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Enter your Review',
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width: 1),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              15)),
+                                                              focusedBorder:
+                                                                  OutlineInputBorder(
+                                                                borderSide:
+                                                                    BorderSide(
+                                                                  color: Colors
+                                                                      .amber,
+                                                                  width: 2,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15),
+                                                              ),
+                                                            ),
+                                                            onChanged: (value) {
+                                                              comment = value;
+                                                            },
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              YellowButton(
+                                                                  size: MediaQuery.of(
+                                                                          context)
+                                                                      .size,
+                                                                  label:
+                                                                      'Cancel',
+                                                                  press: () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  width: 0.3),
+                                                              SizedBox(
+                                                                width: 15,
+                                                              ),
+                                                              YellowButton(
+                                                                  size: MediaQuery.of(
+                                                                          context)
+                                                                      .size,
+                                                                  label: 'Ok',
+                                                                  press:
+                                                                      () async {
+                                                                    CollectionReference collectionReference = FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            'products')
+                                                                        .doc(order[
+                                                                            'proid'])
+                                                                        .collection(
+                                                                            'review');
+                                                                    await collectionReference
+                                                                        .doc(FirebaseAuth
+                                                                            .instance
+                                                                            .currentUser!
+                                                                            .uid)
+                                                                        .set({
+                                                                      'name': order[
+                                                                          'customername'],
+                                                                      'email':
+                                                                          order[
+                                                                              'email'],
+                                                                      'rate':
+                                                                          rate,
+                                                                      'comment':
+                                                                          comment,
+                                                                      'profileimages':
+                                                                          order[
+                                                                              'profileimage'],
+                                                                    }).whenComplete(
+                                                                            () async {
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .runTransaction(
+                                                                              (transaction) async {
+                                                                        DocumentReference documentReference = FirebaseFirestore
+                                                                            .instance
+                                                                            .collection('orders')
+                                                                            .doc(order['orderid']);
+                                                                        await transaction.update(
+                                                                            documentReference, {
+                                                                          'orderreview':
+                                                                              true
+                                                                        }); // to prevent user add many comment
+                                                                      });
+                                                                    });
+                                                                    await Future.delayed(Duration(
+                                                                            microseconds:
+                                                                                100))
+                                                                        .whenComplete(() =>
+                                                                            Navigator.pop(context));
+                                                                  },
+                                                                  width: 0.3),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ));
+                                        },
                                         child: Text('Write Review'))
                                     : Text(''),
                                 order['deliverystatus'] == 'delivered' &&
