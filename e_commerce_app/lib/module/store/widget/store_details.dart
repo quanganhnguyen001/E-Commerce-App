@@ -8,6 +8,7 @@ import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 
 import '../../gallery/widget/product_model.dart';
+import 'edit_store.dart';
 
 class StoreDetails extends StatefulWidget {
   const StoreDetails({Key? key, required this.adminId}) : super(key: key);
@@ -84,7 +85,14 @@ class _StoreDetailsState extends State<StoreDetails> {
                         data['aid'] == FirebaseAuth.instance.currentUser!.uid
                             ? Container(
                                 child: MaterialButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditStore(
+                                                  data: data,
+                                                )));
+                                  },
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
