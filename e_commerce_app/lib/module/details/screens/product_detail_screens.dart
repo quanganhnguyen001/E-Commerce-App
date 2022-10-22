@@ -9,6 +9,7 @@ import 'package:e_commerce_app/module/profile/widget/profile_headers.dart';
 import 'package:e_commerce_app/module/store/widget/store_details.dart';
 import 'package:e_commerce_app/providers/cart_provider.dart';
 import 'package:e_commerce_app/providers/wish_provider.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,11 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
         .collection('products')
         .where('maincateg', isEqualTo: widget.prodList['maincateg'])
         .where('subcateory', isEqualTo: widget.prodList['subcateory'])
+        .snapshots();
+    final Stream<QuerySnapshot> _reviewStream = FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.prodList['proid'])
+        .collection('review')
         .snapshots();
     final Size size = MediaQuery.of(context).size;
     return Material(
@@ -233,6 +239,12 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
                               fontWeight: FontWeight.w600,
                               color: Colors.blueGrey.shade800),
                         ),
+                        ExpandableTheme(
+                            data: ExpandableThemeData(
+                              iconSize: 30,
+                              iconColor: Colors.blue,
+                            ),
+                            child: review(_reviewStream)),
                         ProfileHeaders(name: 'Similar Items'),
                         SizedBox(
                           child: StreamBuilder<QuerySnapshot>(
@@ -372,4 +384,77 @@ class _ProductDetailScreensState extends State<ProductDetailScreens> {
       ),
     );
   }
+}
+
+Widget review(var _reviewStream) {
+  return ExpandablePanel(
+      header: Padding(
+        padding: EdgeInsets.all(10),
+        child: Text(
+          'Review',
+          style: TextStyle(
+              color: Colors.blue, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ),
+      collapsed: SizedBox(
+        height: 230,
+        child: reviewAll(_reviewStream),
+      ),
+      expanded: reviewAll(_reviewStream));
+}
+
+Widget reviewAll(var _reviewStream) {
+  return StreamBuilder<QuerySnapshot>(
+    stream: _reviewStream,
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+      if (snapshot2.connectionState == ConnectionState.waiting) {
+        return Center(
+          child: CircularProgressIndicator(
+            color: Colors.purple,
+          ),
+        );
+      }
+      if (snapshot2.data!.docs.isEmpty) {
+        return Center(
+          child: Text(
+            'This Item \n\n has no reviews yet',
+            textAlign: TextAlign.center,
+            style: (TextStyle(
+                fontSize: 26,
+                color: Colors.blueGrey,
+                fontWeight: FontWeight.bold)),
+          ),
+        );
+      }
+
+      return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: snapshot2.data!.docs.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage:
+                    NetworkImage(snapshot2.data!.docs[index]['profileimages']),
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(snapshot2.data!.docs[index]['name']),
+                  Row(
+                    children: [
+                      Text(snapshot2.data!.docs[index]['rate'].toString()),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              subtitle: Text(snapshot2.data!.docs[index]['comment']),
+            );
+          });
+    },
+  );
 }
