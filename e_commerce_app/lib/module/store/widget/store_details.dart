@@ -144,10 +144,15 @@ class _StoreDetailsState extends State<StoreDetails> {
                 ],
               ),
               toolbarHeight: 100,
-              flexibleSpace: Image.asset(
-                'assets/images/inapp/coverimage.jpg',
-                fit: BoxFit.cover,
-              ),
+              flexibleSpace: data['coverimage'] == ''
+                  ? Image.asset(
+                      'assets/images/inapp/coverimage.jpg',
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      data['coverimage'],
+                      fit: BoxFit.cover,
+                    ),
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
