@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
 import 'package:e_commerce_app/model/category_list.dart';
+import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -64,7 +65,7 @@ class _EditProductState extends State<EditProduct> {
   }
 
   List<XFile> _imagesList = [];
-  List<String> _imagesUrlList = [];
+  List<dynamic> _imagesUrlList = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _pickedImageError;
 
@@ -82,15 +83,15 @@ class _EditProductState extends State<EditProduct> {
     }
   }
 
-  Future<void> uploadImages() async {
-    if (_mainCategoryValue != 'select category' &&
-        _subCategoryValue != 'subcategory') {
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState!.save();
-        if (_imagesList.isNotEmpty) {
-          setState(() {
-            isLoading = true;
-          });
+  Future uploadImages() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        isLoading = true;
+      });
+      if (_imagesList.isNotEmpty) {
+        if (_mainCategoryValue != 'select category' &&
+            _subCategoryValue != 'subcategory') {
           try {
             for (var images in _imagesList) {
               firebase_storage.Reference ref = firebase_storage
@@ -107,51 +108,36 @@ class _EditProductState extends State<EditProduct> {
             print(e);
           }
         } else {
-          MessageHandler.showSnackBar(
-              _scaffoldKey, 'Pls pick some images first');
+          MessageHandler.showSnackBar(_scaffoldKey, 'Pls select categories');
         }
       } else {
-        MessageHandler.showSnackBar(_scaffoldKey, 'Pls fill all fileds');
+        _imagesUrlList = widget.items['prodimages'];
       }
     } else {
-      MessageHandler.showSnackBar(_scaffoldKey, 'Pls select categories');
+      MessageHandler.showSnackBar(_scaffoldKey, 'Pls fill all fields');
     }
   }
 
-  void uploadData() async {
-    if (_imagesUrlList.isNotEmpty) {
-      CollectionReference productRef =
-          FirebaseFirestore.instance.collection('products');
-      prodId = Uuid().v4(); // generate random id
-      await productRef.doc(prodId).set({
+  editProduct() async {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentReference documentReference = FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.items['proid']);
+      transaction.update(documentReference, {
         'maincateg': _mainCategoryValue,
         'subcateory': _subCategoryValue,
         'price': price,
         'quantity': quantity,
         'prodname': productName,
         'proddescrip': productDescription,
-        'sid': FirebaseAuth.instance.currentUser!.uid,
         'prodimages': _imagesUrlList,
         'discount': discount,
-        'proid': prodId,
-      }).whenComplete(() {
-        setState(() {
-          isLoading = false;
-          _imagesList = [];
-          _mainCategoryValue = 'select category';
-          // _subCategoryValue = 'subcategory';
-          _subCategoryList = [];
-          _imagesUrlList = [];
-        });
-        _formKey.currentState!.reset();
       });
-    } else {}
+    }).whenComplete(() => Navigator.pop(context));
   }
 
-  void uploadProduct() async {
-    await uploadImages().whenComplete(() {
-      return uploadData();
-    });
+  saveChanges() async {
+    await uploadImages().whenComplete(() => editProduct());
   }
 
   @override
@@ -168,129 +154,76 @@ class _EditProductState extends State<EditProduct> {
               key: _formKey,
               child: Column(
                 children: [
-                  Row(
+                  Column(
                     children: [
-                      Container(
-                          color: Colors.grey.shade300,
-                          height: size.width * 0.5,
-                          width: size.width * 0.5,
-                          child: _previewCurrentImage()),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Column(
+                      Row(
                         children: [
-                          Text(
-                            'Main Category',
-                            style: TextStyle(color: Colors.red),
-                          ),
                           Container(
-                            padding: EdgeInsets.all(6),
-                            margin: EdgeInsets.all(6),
-                            constraints:
-                                BoxConstraints(minWidth: size.width * 0.3),
-                            child: Text(
-                              widget.items['maincateg'],
-                              textAlign: TextAlign.center,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.yellow,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
+                              color: Colors.grey.shade300,
+                              height: size.width * 0.5,
+                              width: size.width * 0.5,
+                              child: _previewCurrentImage()),
                           SizedBox(
-                            height: 20,
+                            width: 15,
                           ),
-                          Text(
-                            'subcategory',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(6),
-                            margin: EdgeInsets.all(6),
-                            constraints:
-                                BoxConstraints(minWidth: size.width * 0.3),
-                            child: Text(
-                              widget.items['subcateory'],
-                              textAlign: TextAlign.center,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.yellow,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        color: Colors.grey.shade300,
-                        height: size.width * 0.5,
-                        width: size.width * 0.5,
-                        child: _imagesList != null
-                            ? _previewImage()
-                            : Center(
+                          Column(
+                            children: [
+                              Text(
+                                'Main Category',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(6),
+                                margin: EdgeInsets.all(6),
+                                constraints:
+                                    BoxConstraints(minWidth: size.width * 0.3),
                                 child: Text(
-                                'You have not \n \n picked images yet !',
-                                textAlign: TextAlign.center,
-                                style: (TextStyle(fontSize: 16)),
-                              )),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            '* Select Main Category',
-                            style: TextStyle(color: Colors.red),
+                                  widget.items['maincateg'],
+                                  textAlign: TextAlign.center,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.yellow,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'subcategory',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(6),
+                                margin: EdgeInsets.all(6),
+                                constraints:
+                                    BoxConstraints(minWidth: size.width * 0.3),
+                                child: Text(
+                                  widget.items['subcateory'],
+                                  textAlign: TextAlign.center,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.yellow,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ],
                           ),
-                          DropdownButton(
-                              iconSize: 40,
-                              iconEnabledColor: Colors.red,
-                              dropdownColor: Colors.orange,
-                              value: _mainCategoryValue,
-                              items: maincateg
-                                  .map<DropdownMenuItem<String>>((value) {
-                                return DropdownMenuItem(
-                                  child: Text(value),
-                                  value: value,
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                _selectedMainCateg(value);
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Select subcategory',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          DropdownButton(
-                              iconSize: 40,
-                              iconEnabledColor: Colors.red,
-                              iconDisabledColor: Colors.black,
-                              menuMaxHeight: 500,
-                              dropdownColor: Colors.orange,
-                              disabledHint: Text('select category'),
-                              value: _subCategoryValue,
-                              items: _subCategoryList
-                                  .map<DropdownMenuItem<String>>((value) {
-                                return DropdownMenuItem(
-                                  child: Text(value),
-                                  value: value,
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _subCategoryValue = value.toString();
-                                });
-                              }),
                         ],
                       ),
+                      ExpandablePanel(
+                          header: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              'Change Images & Category',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          collapsed: SizedBox(),
+                          expanded: changeImage(size)),
                     ],
                   ),
                   SizedBox(
@@ -307,6 +240,8 @@ class _EditProductState extends State<EditProduct> {
                         child: Container(
                           width: size.width * 0.4,
                           child: TextFormField(
+                            initialValue:
+                                widget.items['price'].toStringAsFixed(2),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Pls enter price';
@@ -332,6 +267,7 @@ class _EditProductState extends State<EditProduct> {
                         child: Container(
                           width: size.width * 0.4,
                           child: TextFormField(
+                            initialValue: widget.items['discount'].toString(),
                             maxLength: 2,
                             validator: (value) {
                               if (value!.isEmpty) {
@@ -360,6 +296,7 @@ class _EditProductState extends State<EditProduct> {
                     child: Container(
                       width: size.width * 0.5,
                       child: TextFormField(
+                        initialValue: widget.items['quantity'].toString(),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Pls enter quantity';
@@ -384,6 +321,7 @@ class _EditProductState extends State<EditProduct> {
                     child: Container(
                       width: size.width * 0.7,
                       child: TextFormField(
+                        initialValue: widget.items['prodname'],
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Pls enter product name';
@@ -407,6 +345,7 @@ class _EditProductState extends State<EditProduct> {
                     child: Container(
                       width: size.width * 0.9,
                       child: TextFormField(
+                        initialValue: widget.items['proddescrip'],
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Pls enter product description';
@@ -427,23 +366,54 @@ class _EditProductState extends State<EditProduct> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Column(
                       children: [
-                        YellowButton(
-                            size: size,
-                            label: 'Cancel',
-                            press: () {
-                              Navigator.pop(context);
-                            },
-                            width: 0.25),
-                        YellowButton(
-                            size: size,
-                            label: 'Save Changes',
-                            press: () {
-                              Navigator.pop(context);
-                            },
-                            width: 0.5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            YellowButton(
+                                size: size,
+                                label: 'Cancel',
+                                press: () {
+                                  Navigator.pop(context);
+                                },
+                                width: 0.25),
+                            isLoading
+                                ? YellowButton(
+                                    size: size,
+                                    label: 'Pls wait ...',
+                                    press: () {
+                                      null;
+                                    },
+                                    width: 0.5)
+                                : YellowButton(
+                                    size: size,
+                                    label: 'Save Changes',
+                                    press: () {
+                                      saveChanges();
+                                    },
+                                    width: 0.5),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.red),
+                              ),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .runTransaction((transaction) async {
+                                  DocumentReference documentReference =
+                                      FirebaseFirestore.instance
+                                          .collection('products')
+                                          .doc(widget.items['proid']);
+                                  transaction.delete(documentReference);
+                                }).whenComplete(() => Navigator.pop(context));
+                              },
+                              child: Text('Delete')),
+                        ),
                       ],
                     ),
                   ),
@@ -453,6 +423,102 @@ class _EditProductState extends State<EditProduct> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget changeImage(Size size) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              color: Colors.grey.shade300,
+              height: size.width * 0.5,
+              width: size.width * 0.5,
+              child: _imagesList != null
+                  ? _previewImage()
+                  : Center(
+                      child: Text(
+                      'You have not \n \n picked images yet !',
+                      textAlign: TextAlign.center,
+                      style: (TextStyle(fontSize: 16)),
+                    )),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            Column(
+              children: [
+                Text(
+                  '* Select Main Category',
+                  style: TextStyle(color: Colors.red),
+                ),
+                DropdownButton(
+                    iconSize: 40,
+                    iconEnabledColor: Colors.red,
+                    dropdownColor: Colors.orange,
+                    value: _mainCategoryValue,
+                    items: maincateg.map<DropdownMenuItem<String>>((value) {
+                      return DropdownMenuItem(
+                        child: Text(value),
+                        value: value,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      _selectedMainCateg(value);
+                    }),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Select subcategory',
+                  style: TextStyle(color: Colors.red),
+                ),
+                DropdownButton(
+                    iconSize: 40,
+                    iconEnabledColor: Colors.red,
+                    iconDisabledColor: Colors.black,
+                    menuMaxHeight: 500,
+                    dropdownColor: Colors.orange,
+                    disabledHint: Text('select category'),
+                    value: _subCategoryValue,
+                    items:
+                        _subCategoryList.map<DropdownMenuItem<String>>((value) {
+                      return DropdownMenuItem(
+                        child: Text(value),
+                        value: value,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _subCategoryValue = value.toString();
+                      });
+                    }),
+              ],
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _imagesList.isNotEmpty
+              ? YellowButton(
+                  size: size,
+                  label: 'Reset Images',
+                  press: () {
+                    setState(() {
+                      _imagesList.clear();
+                    });
+                  },
+                  width: 0.6)
+              : YellowButton(
+                  size: size,
+                  label: 'Change Images',
+                  press: () {
+                    _pickImageProduct();
+                  },
+                  width: 0.6),
+        ),
+      ],
     );
   }
 
