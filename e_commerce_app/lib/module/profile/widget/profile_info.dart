@@ -1,3 +1,5 @@
+import 'package:e_commerce_app/module/profile/widget/add_address.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'repeat_listile.dart';
@@ -42,7 +44,14 @@ class ProfileInfo extends StatelessWidget {
                 title: 'Address',
                 subTitle: address,
                 icon: Icons.location_on,
-                press: () {}),
+                press: FirebaseAuth.instance.currentUser!.isAnonymous
+                    ? null
+                    : () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddAddress()));
+                      }),
             YellowDivider(),
           ],
         ),

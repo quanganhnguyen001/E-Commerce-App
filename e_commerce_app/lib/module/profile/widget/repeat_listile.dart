@@ -11,7 +11,7 @@ class RepeatListile extends StatelessWidget {
   final String title;
   final String subTitle;
   final IconData icon;
-  final VoidCallback press;
+  final VoidCallback? press;
 
   @override
   Widget build(BuildContext context) {

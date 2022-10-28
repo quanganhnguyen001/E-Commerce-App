@@ -204,9 +204,10 @@ class _ProfileScreensState extends State<ProfileScreens> {
                                   phone: data['phone'] == ''
                                       ? '123456789'
                                       : data['phone'],
-                                  address: data['address'] == ''
-                                      ? 'Viet Nam'
-                                      : data['address'],
+                                  address: userAddress(data),
+                                  // address: data['address'] == ''
+                                  //     ? 'Viet Nam'
+                                  //     : data['address'],
                                 ),
                                 ProfileHeaders(name: 'Account Settings'),
                                 ProfileSettings(),
@@ -229,5 +230,15 @@ class _ProfileScreensState extends State<ProfileScreens> {
         ));
       },
     );
+  }
+
+  String userAddress(dynamic data) {
+    if (FirebaseAuth.instance.currentUser!.isAnonymous) {
+      return 'Viet Nam';
+    } else if (FirebaseAuth.instance.currentUser!.isAnonymous == false &&
+        data['address'] == '') {
+      return 'Set your Address';
+    }
+    return data['address'];
   }
 }
