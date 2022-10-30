@@ -75,6 +75,11 @@ class _AdminSignupState extends State<AdminSignup> {
         try {
           await FirebaseAuth.instance
               .createUserWithEmailAndPassword(email: email, password: password);
+          try {
+            await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+          } catch (e) {
+            print(e);
+          }
 
           firebase_storage.Reference ref = firebase_storage
               .FirebaseStorage.instance
@@ -83,6 +88,8 @@ class _AdminSignupState extends State<AdminSignup> {
           await ref.putFile(File(_imageFile!.path));
 
           adminImage = await ref.getDownloadURL();
+          await FirebaseAuth.instance.currentUser!.updateDisplayName(adminName);
+          await FirebaseAuth.instance.currentUser!.updatePhotoURL(adminImage);
           _uid = FirebaseAuth.instance.currentUser!.uid;
           await admin.doc(_uid).set({
             'adminname': adminName,

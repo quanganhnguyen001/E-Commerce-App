@@ -79,6 +79,8 @@ class _StoreDetailsState extends State<StoreDetails> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
+                          // FirebaseAuth.instance.currentUser!.displayName!
+                          //     .toUpperCase(),
                           data['adminname'],
                           style: TextStyle(fontSize: 20, color: Colors.orange),
                         ),

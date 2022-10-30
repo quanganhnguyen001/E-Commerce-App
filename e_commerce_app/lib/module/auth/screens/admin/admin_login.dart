@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
+import 'package:e_commerce_app/common/widget/yellow_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,7 @@ class _AdminLoginState extends State<AdminLogin> {
   late String email;
   late String password;
   bool _isLoading = false;
+  bool _isVerified = false;
 
   void _logIn() async {
     setState(() {
@@ -37,10 +39,19 @@ class _AdminLoginState extends State<AdminLogin> {
       try {
         await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password);
+        await FirebaseAuth.instance.currentUser!.reload();
+        if (FirebaseAuth.instance.currentUser!.emailVerified) {
+          _formKey.currentState!.reset();
 
-        _formKey.currentState!.reset();
-
-        Navigator.pushReplacementNamed(context, '/admin_screens');
+          Navigator.pushReplacementNamed(context, '/admin_screens');
+        } else {
+          MessageHandler.showSnackBar(
+              _scaffoldKey, 'Pls check your gmail inbox');
+          setState(() {
+            _isLoading = false;
+            _isVerified = true;
+          });
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           setState(() {
@@ -140,13 +151,38 @@ class _AdminLoginState extends State<AdminLogin> {
                               hintText: 'Enter your Password'),
                         ),
                       ),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Forget Password ?',
-                            style: TextStyle(
-                                fontSize: 18, fontStyle: FontStyle.italic),
-                          )),
+                      Row(
+                        children: [
+                          TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'Forget Password ?',
+                                style: TextStyle(
+                                    fontSize: 18, fontStyle: FontStyle.italic),
+                              )),
+                          _isVerified == true
+                              ? TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      await FirebaseAuth.instance.currentUser!
+                                          .sendEmailVerification();
+                                    } catch (e) {
+                                      print(e);
+                                    }
+                                    Future.delayed(Duration(seconds: 3))
+                                        .whenComplete(() {
+                                      setState(() {
+                                        _isVerified = false;
+                                      });
+                                    });
+                                  },
+                                  child: Text(
+                                    'Resend Email Verified',
+                                    style: TextStyle(color: Colors.red),
+                                  ))
+                              : Container(),
+                        ],
+                      ),
                       HaveAccount(
                         haveAccount: 'Don\'t have an account ?',
                         actionLabel: 'Sign Up',
