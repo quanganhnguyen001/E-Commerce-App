@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
+import 'package:e_commerce_app/module/auth/widget/forgot_password.dart';
 import 'package:e_commerce_app/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -158,7 +159,13 @@ class _AdminLoginState extends State<AdminLogin> {
                       Row(
                         children: [
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPassword()));
+                              },
                               child: Text(
                                 'Forget Password ?',
                                 style: TextStyle(
