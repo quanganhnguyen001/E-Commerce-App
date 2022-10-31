@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/widget/alert_dialog.dart';
+import '../../../repository/auth_repo.dart';
 
 List<String> label = [
   'my store',
@@ -59,9 +60,13 @@ class DashBoardScreens extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   pressYes: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pop(context);
-                    Navigator.pushReplacementNamed(context, '/welcome_screens');
+                    await AuthRepo.logOut();
+                    await Future.delayed(Duration(microseconds: 100))
+                        .whenComplete(() {
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(
+                          context, '/welcome_screens');
+                    });
                   },
                 );
               },

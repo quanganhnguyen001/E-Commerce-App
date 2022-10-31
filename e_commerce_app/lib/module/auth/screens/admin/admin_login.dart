@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:e_commerce_app/common/widget/yellow_button.dart';
+import 'package:e_commerce_app/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,10 +38,9 @@ class _AdminLoginState extends State<AdminLogin> {
     });
     if (_formKey.currentState!.validate()) {
       try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password);
-        await FirebaseAuth.instance.currentUser!.reload();
-        if (FirebaseAuth.instance.currentUser!.emailVerified) {
+        await AuthRepo.signInEmailPassword(email, password);
+        await AuthRepo.reloadUserData();
+        if (await AuthRepo.checkEmailVerified()) {
           _formKey.currentState!.reset();
 
           Navigator.pushReplacementNamed(context, '/admin_screens');
@@ -53,19 +53,23 @@ class _AdminLoginState extends State<AdminLogin> {
           });
         }
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          setState(() {
-            _isLoading = false;
-          });
-          MessageHandler.showSnackBar(
-              _scaffoldKey, 'No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          setState(() {
-            _isLoading = false;
-          });
-          MessageHandler.showSnackBar(
-              _scaffoldKey, 'Wrong password provided for that user.');
-        }
+        setState(() {
+          _isLoading = false;
+        });
+        MessageHandler.showSnackBar(_scaffoldKey, e.message.toString());
+        // if (e.code == 'user-not-found') {
+        //   setState(() {
+        //     _isLoading = false;
+        //   });
+        //   MessageHandler.showSnackBar(
+        //       _scaffoldKey, 'No user found for that email.');
+        // } else if (e.code == 'wrong-password') {
+        //   setState(() {
+        //     _isLoading = false;
+        //   });
+        //   MessageHandler.showSnackBar(
+        //       _scaffoldKey, 'Wrong password provided for that user.');
+        // }
       }
     } else {
       setState(() {

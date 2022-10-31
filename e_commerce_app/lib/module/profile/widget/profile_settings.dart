@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/common/widget/alert_dialog.dart';
+import 'package:e_commerce_app/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,13 @@ class ProfileSettings extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     pressYes: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pop(context);
-                      Navigator.pushReplacementNamed(
-                          context, '/welcome_screens');
+                      await AuthRepo.logOut();
+                      await Future.delayed(Duration(microseconds: 100))
+                          .whenComplete(() {
+                        Navigator.pop(context);
+                        Navigator.pushReplacementNamed(
+                            context, '/welcome_screens');
+                      });
                     },
                   );
                 }),
