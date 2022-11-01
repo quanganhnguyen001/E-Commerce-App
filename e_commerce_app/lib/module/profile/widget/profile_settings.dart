@@ -1,4 +1,5 @@
 import 'package:e_commerce_app/common/widget/alert_dialog.dart';
+import 'package:e_commerce_app/module/profile/widget/change_password.dart';
 import 'package:e_commerce_app/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,7 +34,12 @@ class ProfileSettings extends StatelessWidget {
                 title: 'Change Password',
                 subTitle: '',
                 icon: Icons.lock,
-                press: () {}),
+                press: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChangePassword()));
+                }),
             YellowDivider(),
             RepeatListile(
                 title: 'Log Out',

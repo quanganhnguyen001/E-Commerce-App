@@ -63,4 +63,25 @@ class AuthRepo {
       print(e);
     }
   }
+
+  static Future<bool> checkPassword(email, password) async {
+    AuthCredential authCredential = EmailAuthProvider.credential(
+        email: FirebaseAuth.instance.currentUser!.email!, password: password);
+    try {
+      var credentialResult = await FirebaseAuth.instance.currentUser!
+          .reauthenticateWithCredential(authCredential);
+      return credentialResult.user != null;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<void> updateUserPass(newPassword) async {
+    try {
+      await FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
+    } catch (e) {
+      print(e);
+    }
+  }
 }
