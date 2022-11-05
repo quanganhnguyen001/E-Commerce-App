@@ -51,6 +51,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   expandable: ^5.0.1
   flutter_pw_validator: ^1.4.2
+  google_sign_in: ^5.4.0
 
 
 dev_dependencies:

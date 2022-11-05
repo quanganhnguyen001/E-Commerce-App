@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce_app/common/widget/message_handler.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -19,6 +19,8 @@ class CustomerLogin extends StatefulWidget {
 }
 
 class _CustomerLoginState extends State<CustomerLogin> {
+  CollectionReference customers =
+      FirebaseFirestore.instance.collection('customers');
   bool isVisible = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -28,6 +30,40 @@ class _CustomerLoginState extends State<CustomerLogin> {
   late String email;
   late String password;
   bool _isLoading = false;
+  late String _uid;
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance
+        .signInWithCredential(credential)
+        .whenComplete(() async {
+      print(googleUser);
+      print(googleUser!.id);
+      _uid = FirebaseAuth.instance.currentUser!.uid;
+      await customers.doc(_uid).set({
+        'name': googleUser.displayName,
+        'email': googleUser.email,
+        'profileImage': googleUser.photoUrl,
+        'phone': '',
+        'cid': _uid,
+        'address': '',
+      }).then((value) =>
+          Navigator.pushReplacementNamed(context, '/customer_screens'));
+    });
+  }
 
   void _logIn() async {
     setState(() {
@@ -166,12 +202,71 @@ class _CustomerLoginState extends State<CustomerLogin> {
                                 _logIn();
                               },
                             ),
+                      divider(),
+                      googleLogInButton(),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          SizedBox(
+            width: 80,
+            child: Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+          ),
+          Text(
+            '  Or  ',
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(
+            width: 80,
+            child: Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget googleLogInButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(50, 50, 50, 20),
+      child: Material(
+        elevation: 3,
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(6),
+        child: MaterialButton(
+          onPressed: () {
+            signInWithGoogle();
+          },
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(
+                  FontAwesomeIcons.google,
+                  color: Colors.red,
+                ),
+                Text(
+                  'Sign In With Google',
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                )
+              ]),
         ),
       ),
     );

@@ -7,6 +7,8 @@ import 'package:e_commerce_app/module/auth/widget/forgot_password.dart';
 import 'package:e_commerce_app/repository/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -22,6 +24,8 @@ class AdminLogin extends StatefulWidget {
 }
 
 class _AdminLoginState extends State<AdminLogin> {
+  CollectionReference admin = FirebaseFirestore.instance.collection('admin');
+
   bool isVisible = true;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -32,6 +36,39 @@ class _AdminLoginState extends State<AdminLogin> {
   late String password;
   bool _isLoading = false;
   bool _isVerified = false;
+  late String _uid;
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance
+        .signInWithCredential(credential)
+        .whenComplete(() async {
+      print(googleUser);
+      print(googleUser!.id);
+      _uid = FirebaseAuth.instance.currentUser!.uid;
+      await admin.doc(_uid).set({
+        'adminname': googleUser.displayName,
+        'email': googleUser.email,
+        'adminimage': googleUser.photoUrl,
+        'phone': '',
+        'aid': _uid,
+        'coverimage': '',
+      }).then(
+          (value) => Navigator.pushReplacementNamed(context, '/admin_screens'));
+    });
+  }
 
   void _logIn() async {
     setState(() {
@@ -47,7 +84,7 @@ class _AdminLoginState extends State<AdminLogin> {
           Navigator.pushReplacementNamed(context, '/admin_screens');
         } else {
           MessageHandler.showSnackBar(
-              _scaffoldKey, 'Pls check your gmail inbox');
+              _scaffoldKey, 'Pls check your gmail inbox and login again');
           setState(() {
             _isLoading = false;
             _isVerified = true;
@@ -213,12 +250,71 @@ class _AdminLoginState extends State<AdminLogin> {
                                 _logIn();
                               },
                             ),
+                      divider(),
+                      googleLogInButton(),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget divider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          SizedBox(
+            width: 80,
+            child: Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+          ),
+          Text(
+            '  Or  ',
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(
+            width: 80,
+            child: Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget googleLogInButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(50, 50, 50, 20),
+      child: Material(
+        elevation: 3,
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(6),
+        child: MaterialButton(
+          onPressed: () {
+            signInWithGoogle();
+          },
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(
+                  FontAwesomeIcons.google,
+                  color: Colors.red,
+                ),
+                Text(
+                  'Sign In With Google',
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                )
+              ]),
         ),
       ),
     );
