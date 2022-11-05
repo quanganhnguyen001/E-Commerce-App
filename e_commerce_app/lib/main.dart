@@ -4,6 +4,7 @@ import 'package:e_commerce_app/module/auth/screens/customers/customer_login.dart
 import 'package:e_commerce_app/module/auth/screens/customers/customer_signup.dart';
 import 'package:e_commerce_app/module/home/widget/admin_home.dart';
 import 'package:e_commerce_app/module/home/widget/customer_home.dart';
+import 'package:e_commerce_app/module/onboard/screens/onboard_screens.dart';
 import 'package:e_commerce_app/module/welcome/screens/welcome_screens.dart';
 import 'package:e_commerce_app/providers/cart_provider.dart';
 import 'package:e_commerce_app/providers/wish_provider.dart';
@@ -32,9 +33,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/welcome_screens',
+      initialRoute: '/onboard_screens',
       routes: {
         '/welcome_screens': (context) => WelcomeScreens(),
+        '/onboard_screens': (context) => OnboardScreens(),
         '/customer_screens': (context) => CustomerHomeScreen(),
         '/admin_screens': (context) => AdminHome(),
         '/customer_signup': (context) => CustomerSignup(),
