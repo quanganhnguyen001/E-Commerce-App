@@ -1,5 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_commerce_app/module/category/widget/sub_category_product.dart';
+import 'package:e_commerce_app/module/gallery/screens/shoes_gallery.dart';
+import 'package:e_commerce_app/module/onboard/widget/hot_deals.dart';
 import 'package:flutter/material.dart';
 
 class OnboardScreens extends StatefulWidget {
@@ -12,10 +17,14 @@ class OnboardScreens extends StatefulWidget {
 class _OnboardScreensState extends State<OnboardScreens> {
   Timer? countDownTimer;
   int second = 3;
+  List<int> discountList = [];
+  int? maxDiscount;
 
   @override
   void initState() {
     startTimer();
+    getDiscount();
+
     // TODO: implement initState
     super.initState();
   }
@@ -42,15 +51,57 @@ class _OnboardScreensState extends State<OnboardScreens> {
     countDownTimer!.cancel();
   }
 
+  void getDiscount() {
+    FirebaseFirestore.instance
+        .collection('products')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        discountList.add(doc['discount']);
+      }
+    }).whenComplete(() => setState(() {
+              maxDiscount = discountList.reduce(max);
+            }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
-            'assets/images/onboard/watches.JPEG',
-            width: 600,
-            fit: BoxFit.cover,
+          GestureDetector(
+            onTap: () {
+              stopTimer();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HotDealsScreen(
+                            fromOnBoarding: true,
+                            maxDiscount: maxDiscount.toString(),
+                          )),
+                  (Route route) => false);
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => ShoesGallery(
+              //               fromOnboard: true,
+              //             )),
+              //     (Route route) => false);
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => SubCategProduct(
+              //               title: 'smart watch',
+              //               labelProduct: 'electronics',
+              //               fromOnboard: true,
+              //             )),
+              //     (Route route) => false);
+            },
+            child: Image.asset(
+              'assets/images/onboard/sale.JPEG',
+              width: 600,
+              fit: BoxFit.cover,
+            ),
           ),
           Positioned(
             top: 60,

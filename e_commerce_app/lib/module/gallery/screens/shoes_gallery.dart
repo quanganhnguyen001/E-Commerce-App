@@ -1,56 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_commerce_app/common/widget/appbar_back_button.dart';
+import 'package:e_commerce_app/common/widget/appbar_title.dart';
 import 'package:flutter/material.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 
-import '../../gallery/widget/product_model.dart';
+import '../widget/product_model.dart';
 
-class SubCategProduct extends StatefulWidget {
-  const SubCategProduct(
-      {Key? key,
-      required this.title,
-      required this.labelProduct,
-      this.fromOnboard = false})
-      : super(key: key);
-
-  final String title;
-  final String labelProduct;
+class ShoesGallery extends StatefulWidget {
+  const ShoesGallery({Key? key, this.fromOnboard = false}) : super(key: key);
   final bool fromOnboard;
 
   @override
-  State<SubCategProduct> createState() => _SubCategProductState();
+  State<ShoesGallery> createState() => _ShoesGalleryState();
 }
 
-class _SubCategProductState extends State<SubCategProduct> {
+class _ShoesGalleryState extends State<ShoesGallery> {
+  final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
+      .collection('products')
+      .where('maincateg', isEqualTo: 'men')
+      .snapshots();
+
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
-        .collection('products')
-        .where('maincateg', isEqualTo: widget.labelProduct)
-        .where('subcateory', isEqualTo: widget.title)
-        .snapshots();
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: widget.fromOnboard == true
-            ? IconButton(
+      appBar: widget.fromOnboard == true
+          ? AppBar(
+              title: AppBarTitle(
+                title: 'Shoes',
+              ),
+              centerTitle: true,
+              elevation: 0,
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                color: Colors.black,
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/customer_screens');
                 },
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ))
-            : AppBarBackButton(),
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+              ),
+            )
+          : null,
       body: StreamBuilder<QuerySnapshot>(
         stream: _productsStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
