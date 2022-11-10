@@ -34,7 +34,7 @@ class _HotDealsScreenState extends State<HotDealsScreen> {
         leading: widget.fromOnBoarding == true
             ? IconButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/customer_home');
+                  Navigator.pushReplacementNamed(context, '/customer_screens');
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios_new,

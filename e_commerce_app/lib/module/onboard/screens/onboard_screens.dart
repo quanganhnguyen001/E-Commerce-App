@@ -7,6 +7,12 @@ import 'package:e_commerce_app/module/gallery/screens/shoes_gallery.dart';
 import 'package:e_commerce_app/module/onboard/widget/hot_deals.dart';
 import 'package:flutter/material.dart';
 
+enum Offer {
+  watches,
+  shoes,
+  sale,
+}
+
 class OnboardScreens extends StatefulWidget {
   const OnboardScreens({Key? key}) : super(key: key);
 
@@ -19,9 +25,14 @@ class _OnboardScreensState extends State<OnboardScreens> {
   int second = 3;
   List<int> discountList = [];
   int? maxDiscount;
+  late int selectedIndex;
+  late String offerName;
+  late String assetsName;
+  late Offer offer;
 
   @override
   void initState() {
+    randomOffer();
     startTimer();
     getDiscount();
 
@@ -33,6 +44,18 @@ class _OnboardScreensState extends State<OnboardScreens> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  void randomOffer() {
+    for (var i = 0; i < Offer.values.length; i++) {
+      var random = Random();
+      setState(() {
+        selectedIndex = random.nextInt(3);
+        offerName = Offer.values[selectedIndex].toString();
+        assetsName = offerName.replaceAll("Offer.", "");
+        offer = Offer.values[selectedIndex];
+      });
+    }
   }
 
   void startTimer() {
@@ -49,6 +72,41 @@ class _OnboardScreensState extends State<OnboardScreens> {
 
   void stopTimer() {
     countDownTimer!.cancel();
+  }
+
+  void navigate() {
+    switch (offer) {
+      case Offer.watches:
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SubCategProduct(
+                      title: 'smart watch',
+                      labelProduct: 'electronics',
+                      fromOnboard: true,
+                    )),
+            (Route route) => false);
+        break;
+      case Offer.shoes:
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShoesGallery(
+                      fromOnboard: true,
+                    )),
+            (Route route) => false);
+        break;
+      case Offer.sale:
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HotDealsScreen(
+                      fromOnBoarding: true,
+                      maxDiscount: maxDiscount.toString(),
+                    )),
+            (Route route) => false);
+        break;
+    }
   }
 
   void getDiscount() {
@@ -70,39 +128,11 @@ class _OnboardScreensState extends State<OnboardScreens> {
       body: Stack(
         children: [
           GestureDetector(
-            onTap: () {
-              stopTimer();
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HotDealsScreen(
-                            fromOnBoarding: true,
-                            maxDiscount: maxDiscount.toString(),
-                          )),
-                  (Route route) => false);
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => ShoesGallery(
-              //               fromOnboard: true,
-              //             )),
-              //     (Route route) => false);
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => SubCategProduct(
-              //               title: 'smart watch',
-              //               labelProduct: 'electronics',
-              //               fromOnboard: true,
-              //             )),
-              //     (Route route) => false);
-            },
-            child: Image.asset(
-              'assets/images/onboard/sale.JPEG',
-              width: 600,
-              fit: BoxFit.cover,
-            ),
-          ),
+              onTap: () {
+                stopTimer();
+                navigate();
+              },
+              child: buidAsset()),
           Positioned(
             top: 60,
             right: 30,
@@ -124,6 +154,14 @@ class _OnboardScreensState extends State<OnboardScreens> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget buidAsset() {
+    return Image.asset(
+      'assets/images/onboard/$assetsName.JPEG',
+      width: 600,
+      fit: BoxFit.cover,
     );
   }
 }
